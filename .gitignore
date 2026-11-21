@@ -1,0 +1,24 @@
+# 기획 문서·조사 사본은 공개 저장소에 올리지 않는다(D69). 별도 비공개 저장소(.notes-git)가 관리한다
+/CLAUDE.md
+/docs/
+/research/
+/.notes-git/
+
+# Android / Gradle
+.gradle/
+build/
+local.properties
+*.iml
+.idea/
+.DS_Store
+captures/
+.externalNativeBuild/
+.cxx/
+*.keystore
+*.jks
+keystore.properties
+
+# Cloudflare Workers / Node
+node_modules/
+.wrangler/
+.dev.vars
