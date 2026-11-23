@@ -183,7 +183,7 @@
     <string name="set_notify_system">Turn on in system settings</string>
     <string name="set_week_start">First day of the week</string>
     <string name="week_locale">Follow the device</string>
-    <string name="set_privacy">Your records stay on this phone. Nothing is sent anywhere.</string>
+    <string name="set_privacy">Your records stay on this phone. If you turn on Friends, only daily totals and fixed choices (plant, icons, colors) are shared with friends.</string>
     <string name="set_licenses">Open source licenses</string>
     <string name="set_feedback">Send a problem</string>
     <string name="set_version">Version %1$s</string>
@@ -196,4 +196,39 @@
     <string name="licenses_title">Open source licenses</string>
     <string name="licenses_app">This app is open source under the MIT license.</string>
     <string name="feedback_subject">Problem report</string>
+
+    <!-- 친구(M4b, D59) · 익명 신호(D63) -->
+    <string name="tab_friends">Friends</string>
+    <string name="fr_soon">Friends is coming soon.</string>
+    <string name="fr_intro">See each other\'s terrace with friends.</string>
+    <string name="fr_what">What is shared: minutes per day, how your plant looks, activity icons and colors. Activity names and any writing are never sent.</string>
+    <string name="fr_turn_on">Turn on Friends</string>
+    <string name="fr_turn_off">Turn off Friends</string>
+    <string name="fr_my_code">My code</string>
+    <string name="fr_code_hint">Ask your friend to enter it, and enter theirs too.</string>
+    <string name="fr_copy">Copy</string>
+    <string name="fr_copied">Copied.</string>
+    <string name="fr_add_hint">Friend\'s code</string>
+    <string name="fr_add">Add</string>
+    <string name="fr_waiting">Waiting for them to add you: %1$s</string>
+    <string name="fr_linked">You\'re friends now.</string>
+    <string name="fr_sent">Sent. You\'ll be friends once they add your code.</string>
+    <string name="fr_none">No friends yet.</string>
+    <string name="fr_total">%1$s in all</string>
+    <string name="fr_unfriend">Remove</string>
+    <string name="fr_block">Block</string>
+    <string name="fr_report">Report</string>
+    <string name="fr_report_spam">Spam</string>
+    <string name="fr_report_bad">Inappropriate</string>
+    <string name="fr_report_other">Something else</string>
+    <string name="fr_reported">Thanks. We\'ll take a look.</string>
+    <string name="fr_offline">Connect to the internet to see friends.</string>
+    <string name="fr_paused">Friends is resting for a moment. Your timer and records work as usual.</string>
+    <string name="fr_not_found">There\'s no such code.</string>
+    <string name="fr_self">That\'s your own code.</string>
+    <string name="fr_full">You can have up to 20 friends.</string>
+    <string name="fr_failed">Something went wrong. Please try again later.</string>
+    <string name="fr_desc">Friend %1$s\'s terrace.</string>
+    <string name="set_signal">Anonymous signal to improve the app</string>
+    <string name="set_signal_note">Once a week, we receive only your install week and how many days you spent time. We can\'t tell who you are.</string>
 </resources>

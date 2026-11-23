@@ -12,7 +12,11 @@ import kotlinx.serialization.json.Json
  * 익명 키·친구는 M4b에서 넣는다(필드는 지금 없다. 모르는 필드는 읽을 때 무시한다).
  */
 @Serializable
-data class BackupSettings(val weekStart: Int = 0, val notify: Boolean = true, val gardenSeed: Long = 0L)
+data class BackupSettings(
+    val weekStart: Int = 0, val notify: Boolean = true, val gardenSeed: Long = 0L,
+    /** 친구 기능의 기기 키·코드(켰을 때만). 폰을 바꿔도 친구가 이어진다. 옛 폰의 친구 기능은 같은 키라 함께 움직인다. */
+    val friendKey: String? = null, val friendCode: String? = null,
+)
 
 @Serializable
 data class BackupActivity(

@@ -167,7 +167,7 @@
     <string name="set_notify_system">시스템 설정에서 켜기</string>
     <string name="set_week_start">주의 시작</string>
     <string name="week_locale">기기 설정 따르기</string>
-    <string name="set_privacy">기록은 이 폰에만 있어요. 어디로도 보내지 않아요.</string>
+    <string name="set_privacy">기록은 이 폰에만 있어요. 친구 기능을 켜면 날짜별 시간과 정해진 값(식물·아이콘·색)만 친구에게 보내져요.</string>
     <string name="set_licenses">오픈소스 라이선스</string>
     <string name="set_feedback">문제 보내기</string>
     <string name="set_version">버전 %1$s</string>
@@ -180,4 +180,38 @@
     <string name="licenses_title">오픈소스 라이선스</string>
     <string name="licenses_app">이 앱은 MIT 라이선스로 공개된 오픈소스예요.</string>
     <string name="feedback_subject">문제 보내기</string>
+
+    <string name="tab_friends">친구</string>
+    <string name="fr_soon">친구 기능은 준비 중이에요.</string>
+    <string name="fr_intro">친구와 서로의 테라스를 볼 수 있어요.</string>
+    <string name="fr_what">보내는 것: 날짜별 시간(분), 식물 모양, 활동 아이콘과 색. 활동 이름이나 글은 보내지 않아요.</string>
+    <string name="fr_turn_on">친구 기능 켜기</string>
+    <string name="fr_turn_off">친구 기능 끄기</string>
+    <string name="fr_my_code">내 코드</string>
+    <string name="fr_code_hint">친구에게 이 코드를 넣어 달라고 하고, 친구 코드도 넣어 주세요.</string>
+    <string name="fr_copy">복사</string>
+    <string name="fr_copied">복사했어요.</string>
+    <string name="fr_add_hint">친구 코드</string>
+    <string name="fr_add">더하기</string>
+    <string name="fr_waiting">상대가 내 코드를 넣기를 기다리는 중: %1$s</string>
+    <string name="fr_linked">친구가 됐어요.</string>
+    <string name="fr_sent">보냈어요. 상대가 내 코드를 넣으면 친구가 돼요.</string>
+    <string name="fr_none">아직 친구가 없어요.</string>
+    <string name="fr_total">모두 %1$s</string>
+    <string name="fr_unfriend">끊기</string>
+    <string name="fr_block">막기</string>
+    <string name="fr_report">신고</string>
+    <string name="fr_report_spam">스팸</string>
+    <string name="fr_report_bad">부적절함</string>
+    <string name="fr_report_other">그 밖의 문제</string>
+    <string name="fr_reported">알려 주셔서 고마워요. 살펴볼게요.</string>
+    <string name="fr_offline">인터넷이 연결되면 친구를 볼 수 있어요.</string>
+    <string name="fr_paused">친구 화면은 잠시 쉬는 중이에요. 타이머와 기록은 그대로 돼요.</string>
+    <string name="fr_not_found">그런 코드가 없어요.</string>
+    <string name="fr_self">내 코드예요.</string>
+    <string name="fr_full">친구는 20명까지예요.</string>
+    <string name="fr_failed">잘 안 됐어요. 조금 뒤에 다시 해 주세요.</string>
+    <string name="fr_desc">친구 %1$s의 테라스.</string>
+    <string name="set_signal">앱 개선을 위한 익명 신호</string>
+    <string name="set_signal_note">일주일에 한 번, 설치한 주와 그 주에 시간을 보낸 날 수만 보내요. 누구인지는 알 수 없어요.</string>
 </resources>

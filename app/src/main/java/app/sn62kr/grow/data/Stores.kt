@@ -69,14 +69,42 @@ class SettingsStore(private val ds: DataStore<Preferences>) {
 
     /** 백업 파일에 넣을 설정. */
     suspend fun export(): BackupSettings = ds.data.first().let { p ->
-        BackupSettings(p[weekStartKey] ?: 0, p[notifyKey] ?: true, p[gardenSeedKey] ?: 0L)
+        BackupSettings(p[weekStartKey] ?: 0, p[notifyKey] ?: true, p[gardenSeedKey] ?: 0L, p[friendKeyKey], p[friendCodeKey])
     }
 
     /** 백업에서 되살린다. 정원 씨앗은 이 폰에 기록이 없을 때만 바꾼다 — 있으면 지금 화분 모양이 갑자기 바뀐다. */
     suspend fun import(s: BackupSettings, takeGardenSeed: Boolean) = ds.edit { p ->
         p[weekStartKey] = s.weekStart; p[notifyKey] = s.notify
         if (takeGardenSeed && s.gardenSeed != 0L) p[gardenSeedKey] = s.gardenSeed
+        // 친구 키도 옮긴다(design.md 2절: 폰을 바꿔도 친구가 이어진다). 이 폰에 이미 키가 있으면 그대로 둔다.
+        if (p[friendKeyKey] == null && s.friendKey != null && s.friendCode != null) { p[friendKeyKey] = s.friendKey; p[friendCodeKey] = s.friendCode }
     }
+
+    // 친구 기능(D59): 켜기 전에는 아무것도 보내지 않는다. 키는 이 기기가 만든 무작위 값, 서버는 해시만 둔다.
+    private val friendKeyKey = stringPreferencesKey("friendKey")
+    private val friendCodeKey = stringPreferencesKey("friendCode")
+    private val lastSnapshotDayKey = stringPreferencesKey("lastSnapshotDay")
+    // 익명 주간 신호(D63): 기본 켬. 설치한 주와 그 주에 시간을 보낸 날 수만.
+    private val signalKey = booleanPreferencesKey("signal")
+    private val installWeekKey = stringPreferencesKey("installWeek")
+    private val lastSignalWeekKey = stringPreferencesKey("lastSignalWeek")
+
+    val friendKey: Flow<String?> = ds.data.map { it[friendKeyKey] }
+    val friendCode: Flow<String?> = ds.data.map { it[friendCodeKey] }
+    val lastSnapshotDay: Flow<String?> = ds.data.map { it[lastSnapshotDayKey] }
+    val signal: Flow<Boolean> = ds.data.map { it[signalKey] ?: true }
+    val installWeek: Flow<String?> = ds.data.map { it[installWeekKey] }
+    val lastSignalWeek: Flow<String?> = ds.data.map { it[lastSignalWeekKey] }
+
+    suspend fun setFriend(key: String?, code: String?) = ds.edit { p ->
+        if (key == null) p.remove(friendKeyKey) else p[friendKeyKey] = key
+        if (code == null) p.remove(friendCodeKey) else p[friendCodeKey] = code
+        p.remove(lastSnapshotDayKey)
+    }
+    suspend fun setLastSnapshotDay(d: String) = ds.edit { it[lastSnapshotDayKey] = d }
+    suspend fun setSignal(v: Boolean) = ds.edit { it[signalKey] = v }
+    suspend fun ensureInstallWeek(week: String) = ds.edit { if (it[installWeekKey] == null) it[installWeekKey] = week }
+    suspend fun setLastSignalWeek(w: String) = ds.edit { it[lastSignalWeekKey] = w }
 
     private val widgetTipKey = booleanPreferencesKey("widgetTipClosed")
     val widgetTipClosed: Flow<Boolean> = ds.data.map { it[widgetTipKey] ?: false }

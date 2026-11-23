@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Face
+import app.sn62kr.grow.ui.friends.FriendsScreen
+import app.sn62kr.grow.ui.friends.FriendsViewModel
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -75,6 +78,7 @@ private object Routes {
     const val ONBOARDING = "onboarding"
     const val HOME = "home"
     const val YEAR = "year"
+    const val FRIENDS = "friends"
     const val ACTIVITIES = "activities"
     const val PLANT = "plant"
     const val ALBUM = "album"
@@ -83,7 +87,11 @@ private object Routes {
 }
 
 /** 아래 탭: 홈 · 한 해. 친구 탭은 M4b에서(design.md 3절). */
-private val tabs = listOf(Triple(Routes.HOME, R.string.tab_home, Icons.Default.Home), Triple(Routes.YEAR, R.string.tab_year, Icons.Default.DateRange))
+private val tabs = listOf(
+    Triple(Routes.HOME, R.string.tab_home, Icons.Default.Home),
+    Triple(Routes.YEAR, R.string.tab_year, Icons.Default.DateRange),
+    Triple(Routes.FRIENDS, R.string.tab_friends, Icons.Default.Face),
+)
 
 @Composable
 private fun AppNav(g: Graph) {
@@ -97,7 +105,7 @@ private fun AppNav(g: Graph) {
     val route = entry?.destination?.route
     Scaffold(
         bottomBar = {
-            if (route == Routes.HOME || route == Routes.YEAR) NavigationBar {
+            if (route == Routes.HOME || route == Routes.YEAR || route == Routes.FRIENDS) NavigationBar {
                 tabs.forEach { (r, label, icon) ->
                     NavigationBarItem(
                         selected = route == r,
@@ -120,6 +128,7 @@ private fun AppNav(g: Graph) {
         composable(Routes.YEAR) {
             YearScreen(viewModel { YearViewModel(g) }, Modifier.statusBarsPadding())
         }
+        composable(Routes.FRIENDS) { FriendsScreen(viewModel { FriendsViewModel(g) }) }
         composable(Routes.PLANT) {
             PlantScreen(viewModel { PlantViewModel(g) }, onBack = { nav.popBackStack() }, onAlbum = { nav.navigate(Routes.ALBUM) })
         }

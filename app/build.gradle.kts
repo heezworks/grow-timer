@@ -22,8 +22,13 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
-        debug { applicationIdSuffix = ".debug" }
+        // 친구 서버 주소. 디버그는 이 맥의 wrangler dev(폰은 `adb reverse tcp:8787 tcp:8787`). 릴리스는 배포한 뒤 넣는다 — 비어 있으면 친구 탭이 "준비 중".
+        debug {
+            applicationIdSuffix = ".debug"
+            buildConfigField("String", "API_BASE", "\"http://127.0.0.1:8787\"")
+        }
         release {
+            buildConfigField("String", "API_BASE", "\"\"")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -62,6 +67,7 @@ dependencies {
     implementation(libs.navigation.compose)
 
     implementation(libs.glance.appwidget)
+    implementation(libs.work.runtime)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)

@@ -22,6 +22,8 @@ import app.sn62kr.grow.core.garden.GardenState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import app.sn62kr.grow.data.Backup
+import app.sn62kr.grow.net.FriendApi
+import app.sn62kr.grow.net.Friends
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -49,6 +51,7 @@ class Graph(
     val settings = SettingsStore(settingsDs)
     val notifier = Notifier(ctx) { notifyOn }
     val timer = TimerController(timerStore, records, clock, Alarms(ctx), notifier)
+    val friends = Friends(FriendApi(BuildConfig.API_BASE), records, settings, clock)
 
     /** 오늘(현지). 자정이 지나면 바뀐다 — 30초마다 본다. */
     val today: Flow<LocalDate> = flow { while (true) { emit(clock.today()); delay(30_000) } }.distinctUntilChanged()
@@ -107,5 +110,6 @@ class GrowApp : Application() {
         WidgetUpdates.scheduleMidnight(this)
         @OptIn(kotlinx.coroutines.DelicateCoroutinesApi::class)
         graph.follow(kotlinx.coroutines.GlobalScope)
+        Friends.schedule(this)
     }
 }

@@ -72,6 +72,8 @@ class SettingsViewModel(private val g: Graph) : ViewModel() {
     val notify: StateFlow<Boolean> = g.settings.notify.stateIn(viewModelScope, eager, true)
     val weekStart: StateFlow<Int> = g.settings.weekStart.stateIn(viewModelScope, eager, 0)
     val lastBackup: StateFlow<Long> = g.settings.lastBackupAt.stateIn(viewModelScope, eager, 0L)
+    val signal: StateFlow<Boolean> = g.settings.signal.stateIn(viewModelScope, eager, true)
+    fun setSignal(v: Boolean) = viewModelScope.launch { g.settings.setSignal(v) }
     val messages = MutableSharedFlow<String>(extraBufferCapacity = 4)
 
     fun setNotify(v: Boolean) = viewModelScope.launch { g.settings.setNotify(v); g.rebaseTimer() } // 도는 타이머의 알림을 바로 맞춘다
@@ -155,6 +157,14 @@ fun SettingsScreen(vm: SettingsViewModel, onBack: () -> Unit, onActivities: () -
             Row(stringResource(R.string.set_week_start), weekLabel(weekStart)) { pickWeek = true }
             HorizontalDivider()
 
+            val signal by vm.signal.collectAsStateWithLifecycle()
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.set_signal)) },
+                supportingContent = { Text(stringResource(R.string.set_signal_note)) },
+                trailingContent = { Switch(checked = signal, onCheckedChange = null) },
+                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.background),
+                modifier = Modifier.selectable(signal, role = Role.Switch) { vm.setSignal(!signal) },
+            )
             Note(R.string.set_privacy)
             Row(stringResource(R.string.set_licenses), onClick = onLicenses)
             Row(stringResource(R.string.set_feedback)) {
