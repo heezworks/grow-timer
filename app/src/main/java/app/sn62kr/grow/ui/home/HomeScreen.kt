@@ -113,6 +113,8 @@ private fun HomeScreen(vm: HomeViewModel, pad: PaddingValues, onActivities: () -
     val yearSec by vm.yearSec.collectAsStateWithLifecycle()
     val day by vm.selectedDay.collectAsStateWithLifecycle()
     val garden by vm.garden.collectAsStateWithLifecycle()
+    val welcomeBack by vm.welcomeBack.collectAsStateWithLifecycle()
+    val dbError by vm.dbError.collectAsStateWithLifecycle()
     val seed by vm.gardenSeed.collectAsStateWithLifecycle()
     val daySessions by vm.daySessions.collectAsStateWithLifecycle()
     val chosen = selected?.takeIf { id -> active.any { it.id == id } } ?: active.firstOrNull()?.id
@@ -136,6 +138,12 @@ private fun HomeScreen(vm: HomeViewModel, pad: PaddingValues, onActivities: () -
                     Icon(Icons.Default.Settings, stringResource(R.string.settings_title), tint = Color(0xFF1C2C44))
                 }
             }
+        }
+        if (dbError) item {
+            Text(stringResource(R.string.home_db_error), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp))
+        }
+        if (welcomeBack && sessions.isEmpty()) item {
+            Text(stringResource(R.string.home_welcome_back), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 8.dp))
         }
         item {
             val total = sessions.sumOf { it.durationSec.toLong() }

@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
@@ -58,6 +59,16 @@ class HomeViewModel(private val g: Graph) : ViewModel() {
     private val daily = g.records.daily(null)
     val grid: StateFlow<YearGrid?> = combine(daily, today, g.weekStartFlow) { d, t, w -> YearGrid.build(t.year, w, d, t) }.stateIn(viewModelScope, stay, null)
     val yearSec: StateFlow<Long> = combine(daily, today, g.weekStartFlow) { d, t, w -> Sums.totals(d, t, w).yearSec }.stateIn(viewModelScope, stay, 0L)
+
+    /**
+     * "다시 왔네요" — 마지막으로 보낸 날이 7일 넘게 지났고 오늘은 아직 없을 때(spec 2-1). 벌·경고가 아니라 반김(D23).
+     * 기록을 못 읽으면 [dbError](spec 2-1 오류 문구).
+     */
+    val dbError = MutableStateFlow(false)
+    val welcomeBack: StateFlow<Boolean> = combine(g.records.allChrono, today) { l, t ->
+        val last = l.maxByOrNull { it.localDate }?.localDate?.let(LocalDate::parse) ?: return@combine false
+        last.plusDays(7).isBefore(t)
+    }.catch { dbError.value = true; emit(false) }.stateIn(viewModelScope, stay, false)
 
     val garden: StateFlow<GardenState?> = g.garden.stateIn(viewModelScope, SharingStarted.Eagerly, null)
     val gardenSeed: StateFlow<Long> = g.settings.gardenSeed.stateIn(viewModelScope, SharingStarted.Eagerly, 0L)

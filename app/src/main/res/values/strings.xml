@@ -263,4 +263,8 @@
     <string name="rv_search_offline">Couldn\'t reach Open Library.</string>
     <string name="rv_share">Show to friends</string>
     <string name="rv_delete">Delete</string>
+
+    <!-- 홈의 상태 문구(spec 2-1). 벌·경고 없음(D23) -->
+    <string name="home_welcome_back">Welcome back. Your plant waited for you.</string>
+    <string name="home_db_error">Couldn\'t load your records. Please reopen the app. If it keeps happening, you can bring in a backup file from Settings.</string>
 </resources>

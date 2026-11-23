@@ -114,6 +114,15 @@ class FlowTest {
         compose.onRoot().captureRoboImage("screenshots/06-home-font2x.png")
     }
 
+    @Test fun welcomeBackAfterAWeek() {
+        runBlocking {
+            val a = g.records.addActivity("독서", 0, "reading")
+            g.records.addManual(a.id, clock.today().minusDays(10), 1800, java.time.ZoneId.of("Asia/Seoul"), clock.today())
+        }
+        compose.setContent { AppFrame { HomeRoute(HomeViewModel(g), onActivities = {}) } }
+        waitText("다시 왔네요. 식물은 그대로 기다리고 있었어요.")
+    }
+
     @Test fun dismissingShortAskResumes() {
         runBlocking { g.records.addActivities(listOf(Triple("독서", 0, "reading"))) }
         compose.setContent { AppFrame { HomeRoute(HomeViewModel(g), onActivities = {}) } }

@@ -244,4 +244,7 @@
     <string name="rv_search_offline">Open Library에 닿지 못했어요.</string>
     <string name="rv_share">친구에게 보이기</string>
     <string name="rv_delete">지우기</string>
+
+    <string name="home_welcome_back">다시 왔네요. 식물은 그대로 기다리고 있었어요.</string>
+    <string name="home_db_error">기록을 불러오지 못했어요. 앱을 다시 열어 주세요. 계속 안 되면 설정에서 백업 파일을 가져올 수 있어요.</string>
 </resources>
