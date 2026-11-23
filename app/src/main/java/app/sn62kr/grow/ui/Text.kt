@@ -20,7 +20,12 @@ object Text {
         return "와(과)"
     }
 
-    fun duration(ctx: Context, sec: Long): String {
+    fun duration(ctx: Context, sec: Long): String = noBreakInside(durationRaw(ctx, sec))
+
+    /** "30분"이 "30 / 분"으로 접히지 않게 낱말 안에 줄바꿈 금지 문자(U+2060)를 넣는다. 낱말 사이(공백)에서만 접힌다. */
+    private fun noBreakInside(s: String) = s.split(' ').joinToString(" ") { w -> w.toList().joinToString("\u2060") }
+
+    private fun durationRaw(ctx: Context, sec: Long): String {
         val m = sec / 60
         val h = m / 60
         return when {

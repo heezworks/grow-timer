@@ -36,7 +36,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import app.sn62kr.grow.R
 import app.sn62kr.grow.core.draw.GridArt
 import app.sn62kr.grow.core.draw.GridPalette
@@ -61,7 +60,9 @@ fun YearGridView(grid: YearGrid, onDay: (LocalDate) -> Unit, modifier: Modifier 
     val heightDp = with(density) { (GridArt.HEIGHT * k).toDp() }
     val stepDp = with(density) { (GridArt.STEP * k).toDp() }
     val locale = Locale.getDefault()
-    val labelStyle = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp)
+    // 달·요일 이름은 칸 크기에 묶인 상자 안에 있어서 글자 크기 설정을 따라 키우지 않는다(2배에서 잘렸다). 칸이 곧 그림이다.
+    val labelSp = with(density) { (cell * 0.72f).toSp() }
+    val labelStyle = MaterialTheme.typography.labelSmall.copy(fontSize = labelSp, lineHeight = labelSp * 1.25f)
     val dim = MaterialTheme.colorScheme.onSurfaceVariant
     val scroll = rememberScrollState()
     val desc = stringResource(R.string.grid_desc, grid.year, grid.filledDays, Text.duration(ctx, grid.totalSec))

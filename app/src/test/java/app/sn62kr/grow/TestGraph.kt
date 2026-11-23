@@ -49,3 +49,6 @@ fun AppFrame(content: @androidx.compose.runtime.Composable () -> Unit) =
     app.sn62kr.grow.ui.theme.GrowTheme {
         androidx.compose.material3.Surface(color = androidx.compose.material3.MaterialTheme.colorScheme.background) { content() }
     }
+
+/** 화면의 시간 글자와 같게: 낱말 안에 U+2060(줄바꿈 금지)을 넣는다(Text.duration). */
+fun nb(s: String) = s.split(' ').joinToString(" ") { w -> w.toList().joinToString("\u2060") }

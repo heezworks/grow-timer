@@ -23,6 +23,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
@@ -85,7 +86,7 @@ class FlowTest {
         waitText("1분이 안 됐어요. 그래도 남길까요?")
         compose.onRoot().captureRoboImage("screenshots/03-short-ask.png")
         compose.onNodeWithText("남기기").performClick()
-        waitText("1분 미만")
+        waitText(nb("1분 미만"))
 
         // 뜨개질 32분: 받침이 있으니 "뜨개질과"
         compose.onNodeWithText("뜨개질").performClick()
@@ -97,11 +98,19 @@ class FlowTest {
         compose.onRoot().captureRoboImage("screenshots/04-timer-countdown.png")
         clock.advance(22 * 60_000)
         compose.onNodeWithText("끝내기").performClick()
-        waitText("뜨개질과 32분을 보냈어요.")
+        waitText("뜨개질과 " + nb("32분") + "을 보냈어요.")
         compose.onRoot().captureRoboImage("screenshots/05-home-today.png")
-        compose.onNodeWithText("오늘 32분").assertIsDisplayed()
+        compose.onNodeWithText("오늘 " + nb("32분")).assertIsDisplayed()
 
         assertEquals(listOf(32 * 60, 20), vm.todaySessions.value.map { it.durationSec }) // 화면이 보는 값으로 본다(메인에서 DB를 막고 읽지 않는다)
+    }
+
+    @Test fun homeLargeFont() {
+        RuntimeEnvironment.setFontScale(2f)
+        runBlocking { g.records.addActivities(listOf(Triple("정원 가꾸기", 0, "gardening"), Triple("뜨개질", 1, "knitting"))) }
+        compose.setContent { AppFrame { HomeRoute(HomeViewModel(g), onActivities = {}) } }
+        waitText("정원 가꾸기")
+        compose.onRoot().captureRoboImage("screenshots/06-home-font2x.png")
     }
 
     @Test fun dismissingShortAskResumes() {
