@@ -51,7 +51,7 @@ class FlowTest {
 
     @Test fun onboardingCreatesPickedActivities() {
         var done = false
-        compose.setContent { GrowTheme { OnboardingScreen(OnboardingViewModel(g)) { done = true } } }
+        compose.setContent { AppFrame { OnboardingScreen(OnboardingViewModel(g)) { done = true } } }
         compose.onRoot().captureRoboImage("screenshots/01-onboarding.png")
         compose.onNodeWithText("독서").performClick()
         compose.onNodeWithText("악기").performClick()
@@ -63,7 +63,7 @@ class FlowTest {
 
     @Test fun skipMakesDefaultActivity() {
         var done = false
-        compose.setContent { GrowTheme { OnboardingScreen(OnboardingViewModel(g)) { done = true } } }
+        compose.setContent { AppFrame { OnboardingScreen(OnboardingViewModel(g)) { done = true } } }
         compose.onNodeWithText("건너뛰기").performClick()
         waitFor { done }
         assertEquals(listOf("나의 시간"), runBlocking { g.records.allActivities.first().map { it.name } })
@@ -71,7 +71,8 @@ class FlowTest {
 
     @Test fun startFinishShortAndNormal() {
         runBlocking { g.records.addActivities(listOf(Triple("독서", 0, "reading"), Triple("뜨개질", 1, "knitting"))) }
-        compose.setContent { GrowTheme { HomeRoute(HomeViewModel(g), onActivities = {}) } }
+        val vm = HomeViewModel(g)
+        compose.setContent { AppFrame { HomeRoute(vm, onActivities = {}) } }
         waitText("첫 시간을 재면 싹이 나요.")
         waitText("독서")
         compose.onRoot().captureRoboImage("screenshots/02-home-empty.png")
@@ -100,13 +101,12 @@ class FlowTest {
         compose.onRoot().captureRoboImage("screenshots/05-home-today.png")
         compose.onNodeWithText("오늘 32분").assertIsDisplayed()
 
-        val today = runBlocking { g.records.day(clock.today()).first() }
-        assertEquals(listOf(32 * 60, 20), today.map { it.durationSec })
+        assertEquals(listOf(32 * 60, 20), vm.todaySessions.value.map { it.durationSec }) // 화면이 보는 값으로 본다(메인에서 DB를 막고 읽지 않는다)
     }
 
     @Test fun dismissingShortAskResumes() {
         runBlocking { g.records.addActivities(listOf(Triple("독서", 0, "reading"))) }
-        compose.setContent { GrowTheme { HomeRoute(HomeViewModel(g), onActivities = {}) } }
+        compose.setContent { AppFrame { HomeRoute(HomeViewModel(g), onActivities = {}) } }
         waitText("독서")
         compose.onNodeWithText("시작").performClick()
         waitText("끝내기")

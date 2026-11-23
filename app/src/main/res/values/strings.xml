@@ -105,4 +105,24 @@
     <string name="notif_paused">Paused</string>
     <string name="notif_target_title">Time\'s up</string>
     <string name="notif_target_text">No rush — finish when you\'re ready.</string>
+
+    <!-- 탭과 격자(M2). 탭 이름은 "기록"을 쓰지 않는다(D56) -->
+    <string name="tab_home">Home</string>
+    <string name="tab_year">Year</string>
+    <string name="grid_less">Less</string>
+    <string name="grid_more">More</string>
+    <string name="grid_summary">%1$d days · %2$s</string>
+    <string name="grid_desc">%1$d: %2$d days, %3$s. Tap a day to see it.</string>
+    <string name="year_prev">Previous year</string>
+    <string name="year_next">Next year</string>
+    <string name="filter_all">All</string>
+    <string name="totals_today">Today</string>
+    <string name="totals_week">This week</string>
+    <string name="totals_year">This year</string>
+    <string name="totals_all">All time</string>
+    <string name="by_activity">Time in %1$d</string>
+    <string name="year_empty">Nothing here yet. Start from Home.</string>
+    <string name="day_empty">No time on this day.</string>
+    <string name="day_add">Add time to this day</string>
+    <string name="home_year_total">%1$s this year</string>
 </resources>

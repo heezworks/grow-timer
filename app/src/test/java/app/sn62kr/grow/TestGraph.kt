@@ -42,3 +42,10 @@ fun testGraph(ctx: Context, clock: FakeClock = FakeClock()): Graph {
         PreferenceDataStoreFactory.create(scope = scope) { File(dir, "settings.preferences_pb") },
     )
 }
+
+/** 앱과 같은 바탕(MainActivity는 Surface 안에 화면을 둔다). 다크 모드 사진의 바탕색이 맞게. */
+@androidx.compose.runtime.Composable
+fun AppFrame(content: @androidx.compose.runtime.Composable () -> Unit) =
+    app.sn62kr.grow.ui.theme.GrowTheme {
+        androidx.compose.material3.Surface(color = androidx.compose.material3.MaterialTheme.colorScheme.background) { content() }
+    }

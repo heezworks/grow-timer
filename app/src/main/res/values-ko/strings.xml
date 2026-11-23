@@ -94,4 +94,23 @@
     <string name="notif_paused">멈춤</string>
     <string name="notif_target_title">정한 시간이 됐어요</string>
     <string name="notif_target_text">천천히 마무리해도 돼요.</string>
+
+    <string name="tab_home">홈</string>
+    <string name="tab_year">한 해</string>
+    <string name="grid_less">적게</string>
+    <string name="grid_more">많이</string>
+    <string name="grid_summary">%1$d일 · %2$s</string>
+    <string name="grid_desc">%1$d년: %2$d일, %3$s. 칸을 누르면 그날을 볼 수 있어요.</string>
+    <string name="year_prev">이전 해</string>
+    <string name="year_next">다음 해</string>
+    <string name="filter_all">전체</string>
+    <string name="totals_today">오늘</string>
+    <string name="totals_week">이번 주</string>
+    <string name="totals_year">올해</string>
+    <string name="totals_all">전체</string>
+    <string name="by_activity">%1$d년에 보낸 시간</string>
+    <string name="year_empty">아직 보낸 시간이 없어요. 홈에서 시작해 보세요.</string>
+    <string name="day_empty">이날은 보낸 시간이 없어요.</string>
+    <string name="day_add">이날에 시간 더하기</string>
+    <string name="home_year_total">올해 %1$s</string>
 </resources>

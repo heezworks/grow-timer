@@ -55,11 +55,12 @@ private fun ActivityPicker(activities: List<Activity>, selected: String?, onSele
 @Composable
 fun ManualAddDialog(
     activities: List<Activity>, initialActivity: String?, today: LocalDate,
+    initialDate: LocalDate = today,
     onDismiss: () -> Unit, onSave: (activityId: String, date: LocalDate, sec: Int) -> Unit,
 ) {
     val ctx = LocalContext.current
     var act by rememberSaveable { mutableStateOf(initialActivity ?: activities.firstOrNull()?.id) }
-    var date by rememberSaveable { mutableStateOf(today.toString()) }
+    var date by rememberSaveable { mutableStateOf(initialDate.toString()) }
     var h by rememberSaveable { mutableStateOf("") }
     var m by rememberSaveable { mutableStateOf("30") }
     var picking by remember { mutableStateOf(false) }

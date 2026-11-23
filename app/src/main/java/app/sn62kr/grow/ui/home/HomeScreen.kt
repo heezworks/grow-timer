@@ -53,6 +53,9 @@ import app.sn62kr.grow.core.model.Activity
 import app.sn62kr.grow.core.model.Session
 import app.sn62kr.grow.core.model.Source
 import app.sn62kr.grow.ui.ColorDot
+import app.sn62kr.grow.ui.SessionRow
+import app.sn62kr.grow.ui.DaySheet
+import app.sn62kr.grow.ui.YearGridView
 import app.sn62kr.grow.ui.Text
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -97,6 +100,10 @@ private fun HomeScreen(vm: HomeViewModel, pad: PaddingValues, onActivities: () -
     val today by vm.today.collectAsStateWithLifecycle()
     val selected by vm.selectedId.collectAsStateWithLifecycle()
     val target by vm.targetMin.collectAsStateWithLifecycle()
+    val grid by vm.grid.collectAsStateWithLifecycle()
+    val yearSec by vm.yearSec.collectAsStateWithLifecycle()
+    val day by vm.selectedDay.collectAsStateWithLifecycle()
+    val daySessions by vm.daySessions.collectAsStateWithLifecycle()
     val chosen = selected?.takeIf { id -> active.any { it.id == id } } ?: active.firstOrNull()?.id
     var adding by rememberSaveable { mutableStateOf(false) }
     var editing by remember { mutableStateOf<Session?>(null) }
@@ -120,8 +127,17 @@ private fun HomeScreen(vm: HomeViewModel, pad: PaddingValues, onActivities: () -
             Text(
                 if (sessions.isEmpty()) stringResource(R.string.home_empty) else stringResource(R.string.home_today_total, Text.duration(ctx, total)),
                 style = if (sessions.isEmpty()) MaterialTheme.typography.titleMedium else MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 4.dp),
             )
+            if (yearSec > 0) Text(stringResource(R.string.home_year_total, Text.duration(ctx, yearSec)),
+                style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 20.dp))
+        }
+        grid?.let { g ->
+            item {
+                // 빈 격자도 그대로 보여 준다 — 채워질 자리가 보이게(spec 2-1)
+                YearGridView(g, onDay = { vm.selectedDay.value = it }, modifier = Modifier.padding(start = 12.dp, top = 12.dp, bottom = 12.dp), cell = 12.dp)
+            }
         }
         item {
             if (active.isEmpty()) {
@@ -163,26 +179,13 @@ private fun HomeScreen(vm: HomeViewModel, pad: PaddingValues, onActivities: () -
     if (adding) ManualAddDialog(active, chosen, today, onDismiss = { adding = false }) { id, date, sec ->
         adding = false; vm.addManual(id, date, sec)
     }
+    day?.let { d ->
+        DaySheet(d, today, daySessions, all, onDismiss = { vm.selectedDay.value = null },
+            onSave = { vm.updateSession(it) }, onDelete = { vm.deleteSession(it) }, onAdd = { a, dd, sec -> vm.addManual(a, dd, sec) })
+    }
     editing?.let { s ->
         SessionEditDialog(s, all, onDismiss = { editing = null },
             onSave = { editing = null; vm.updateSession(it) },
             onDelete = { editing = null; vm.deleteSession(it) })
     }
-}
-
-@Composable
-private fun SessionRow(s: Session, activities: List<Activity>, onClick: () -> Unit) {
-    val ctx = LocalContext.current
-    val a = activities.firstOrNull { it.id == s.activityId }
-    val time = if (s.source == Source.MANUAL) stringResource(R.string.home_manual_tag)
-    else Instant.ofEpochMilli(s.startUtc).atZone(java.time.ZoneId.systemDefault()).toLocalTime()
-        .format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
-    ListItem(
-        headlineContent = { Text(a?.name ?: "—") },
-        supportingContent = { Text(time) },
-        leadingContent = { ColorDot(a?.colorIndex ?: 0, 14.dp) },
-        trailingContent = { Text(Text.duration(ctx, s.durationSec.toLong()), style = MaterialTheme.typography.bodyLarge) },
-        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.background),
-        modifier = Modifier.clickable(onClick = onClick).padding(horizontal = 4.dp),
-    )
 }

@@ -5,7 +5,23 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.ui.res.stringResource
+import androidx.navigation.compose.currentBackStackEntryAsState
+import app.sn62kr.grow.R
+import app.sn62kr.grow.ui.records.YearScreen
+import app.sn62kr.grow.ui.records.YearViewModel
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -51,8 +67,12 @@ class MainActivity : ComponentActivity() {
 private object Routes {
     const val ONBOARDING = "onboarding"
     const val HOME = "home"
+    const val YEAR = "year"
     const val ACTIVITIES = "activities"
 }
+
+/** 아래 탭: 홈 · 한 해. 친구 탭은 M4b에서(design.md 3절). */
+private val tabs = listOf(Triple(Routes.HOME, R.string.tab_home, Icons.Default.Home), Triple(Routes.YEAR, R.string.tab_year, Icons.Default.DateRange))
 
 @Composable
 private fun AppNav(g: Graph) {
@@ -62,7 +82,22 @@ private fun AppNav(g: Graph) {
     }
     val first = start ?: return Box(Modifier.fillMaxSize())
     val nav = rememberNavController()
-    NavHost(nav, startDestination = first) {
+    val entry by nav.currentBackStackEntryAsState()
+    val route = entry?.destination?.route
+    Scaffold(
+        bottomBar = {
+            if (route == Routes.HOME || route == Routes.YEAR) NavigationBar {
+                tabs.forEach { (r, label, icon) ->
+                    NavigationBarItem(
+                        selected = route == r,
+                        onClick = { nav.navigate(r) { popUpTo(Routes.HOME) { saveState = true }; launchSingleTop = true; restoreState = true } },
+                        icon = { Icon(icon, null) }, label = { Text(stringResource(label)) },
+                    )
+                }
+            }
+        },
+    ) { pad ->
+    NavHost(nav, startDestination = first, modifier = Modifier.padding(pad).consumeWindowInsets(pad)) {
         composable(Routes.ONBOARDING) {
             OnboardingScreen(viewModel { OnboardingViewModel(g) }) {
                 nav.navigate(Routes.HOME) { popUpTo(Routes.ONBOARDING) { inclusive = true } }
@@ -71,8 +106,12 @@ private fun AppNav(g: Graph) {
         composable(Routes.HOME) {
             HomeRoute(viewModel { HomeViewModel(g) }, onActivities = { nav.navigate(Routes.ACTIVITIES) })
         }
+        composable(Routes.YEAR) {
+            YearScreen(viewModel { YearViewModel(g) }, Modifier.statusBarsPadding())
+        }
         composable(Routes.ACTIVITIES) {
             ActivitiesScreen(viewModel { ActivitiesViewModel(g) }, onBack = { nav.popBackStack() })
         }
+    }
     }
 }

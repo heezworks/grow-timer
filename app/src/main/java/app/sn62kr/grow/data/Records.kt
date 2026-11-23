@@ -22,6 +22,14 @@ class Records(private val db: GrowDb, private val clock: () -> Long = System::cu
 
     suspend fun hasAnyActivity() = activities.count() > 0
 
+    /** 날짜 → 그날 합(초). 격자와 누적이 이것 하나로 계산된다(design.md 5절: 계산하고 저장하지 않는다). */
+    fun daily(activityId: String? = null): Flow<Map<LocalDate, Int>> =
+        sessions.observeDailySums(activityId).map { l -> l.associate { Days.parse(it.localDate) to it.sec } }
+
+    /** 그해 활동별 합(초), 많은 순. */
+    fun activityTotals(year: Int): Flow<List<Pair<String, Long>>> =
+        sessions.observeActivitySums("$year-01-01", "$year-12-31").map { l -> l.map { it.activityId to it.sec } }
+
     suspend fun addActivity(name: String, colorIndex: Int, iconKey: String): Activity {
         val a = Activity(UUID.randomUUID().toString(), name.trim(), colorIndex, iconKey, activities.maxOrder() + 1, false, clock())
         activities.insert(a.toEntity())

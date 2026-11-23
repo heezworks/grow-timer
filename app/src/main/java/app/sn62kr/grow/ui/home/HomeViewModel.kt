@@ -5,18 +5,20 @@ import androidx.lifecycle.viewModelScope
 import app.sn62kr.grow.Graph
 import app.sn62kr.grow.core.model.Activity
 import app.sn62kr.grow.core.model.Session
+import app.sn62kr.grow.core.stats.Sums
+import app.sn62kr.grow.core.stats.YearGrid
 import app.sn62kr.grow.core.time.Rules
 import app.sn62kr.grow.core.time.RunningTimer
 import app.sn62kr.grow.core.time.TimerMath
 import app.sn62kr.grow.data.Records
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
@@ -44,9 +46,16 @@ class HomeViewModel(private val g: Graph) : ViewModel() {
 
     val activities: StateFlow<List<Activity>> = g.records.allActivities.stateIn(viewModelScope, stay, emptyList())
 
-    /** 자정이 지나면 오늘이 바뀐다. 30초마다 본다. */
-    val today: StateFlow<LocalDate> = flow { while (true) { emit(g.clock.today()); delay(30_000) } }
-        .distinctUntilChanged().stateIn(viewModelScope, SharingStarted.Eagerly, g.clock.today())
+    val today: StateFlow<LocalDate> = g.today.stateIn(viewModelScope, SharingStarted.Eagerly, g.clock.today())
+
+    /** 홈의 격자는 올해·전체 활동. 해 넘기기와 활동별은 "한 해" 탭에서. */
+    private val daily = g.records.daily(null)
+    val grid: StateFlow<YearGrid?> = combine(daily, today) { d, t -> YearGrid.build(t.year, g.weekStart(), d, t) }.stateIn(viewModelScope, stay, null)
+    val yearSec: StateFlow<Long> = combine(daily, today) { d, t -> Sums.totals(d, t, g.weekStart()).yearSec }.stateIn(viewModelScope, stay, 0L)
+
+    val selectedDay = MutableStateFlow<LocalDate?>(null)
+    val daySessions: StateFlow<List<Session>> = selectedDay.flatMapLatest { d -> if (d == null) flowOf(emptyList()) else g.records.day(d) }
+        .stateIn(viewModelScope, stay, emptyList())
 
     val todaySessions: StateFlow<List<Session>> = today.flatMapLatest { g.records.day(it) }.stateIn(viewModelScope, stay, emptyList())
 

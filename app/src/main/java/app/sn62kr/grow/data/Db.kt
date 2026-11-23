@@ -76,8 +76,22 @@ interface ActivityDao {
     suspend fun delete(id: String)
 }
 
+/** 날짜별 합(초). */
+data class DaySum(val localDate: String, val sec: Int)
+
+/** 활동별 합(초). */
+data class ActivitySum(val activityId: String, val sec: Long)
+
 @Dao
 interface SessionDao {
+    /** 모든 날의 합. [activityId]가 null이면 전체. 3년 치라도 1,100줄 남짓이다. */
+    @Query("SELECT localDate, SUM(durationSec) AS sec FROM session WHERE (:activityId IS NULL OR activityId = :activityId) GROUP BY localDate")
+    fun observeDailySums(activityId: String?): Flow<List<DaySum>>
+
+    /** 기간 안의 활동별 합. 날짜는 YYYY-MM-DD 글자라 글자 비교가 곧 날짜 비교다. */
+    @Query("SELECT activityId, SUM(durationSec) AS sec FROM session WHERE localDate BETWEEN :from AND :to GROUP BY activityId ORDER BY sec DESC")
+    fun observeActivitySums(from: String, to: String): Flow<List<ActivitySum>>
+
     @Query("SELECT * FROM session WHERE localDate = :date ORDER BY startUtc DESC")
     fun observeDay(date: String): Flow<List<SessionEntity>>
 
