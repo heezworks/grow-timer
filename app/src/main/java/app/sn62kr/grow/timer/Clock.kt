@@ -3,6 +3,7 @@ package app.sn62kr.grow.timer
 import android.content.Context
 import android.os.SystemClock
 import android.provider.Settings
+import app.sn62kr.grow.core.time.Days
 import app.sn62kr.grow.core.time.Now
 import java.time.LocalDate
 import java.time.ZoneId
@@ -11,7 +12,8 @@ import java.time.ZoneId
 interface Clock {
     fun now(): Now
     fun zone(): ZoneId
-    fun today(): LocalDate = LocalDate.now(zone())
+    /** 오늘(현지). 벽시계에서 구한다 — 타이머가 박는 시작한 날과 같은 규칙. */
+    fun today(): LocalDate = Days.localDate(now().wall, zone())
 }
 
 class SystemClockSource(private val ctx: Context) : Clock {

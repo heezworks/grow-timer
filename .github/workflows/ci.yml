@@ -1,0 +1,43 @@
+# 푸시·PR마다: core 단위 시험, 앱 시험(Robolectric: DB·타이머·화면 흐름), 디버그 빌드.
+# 화면 사진은 비교하지 않고 찍어서 올리기만 한다(맥과 리눅스의 글꼴 차이). 기준을 리눅스로 정하면 verifyRoborazziDebug로 바꾼다.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Android SDK 37.2
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.2" > /dev/null || true
+      - name: Test and build
+        run: ./gradlew :core:test :app:recordRoborazziDebug :app:assembleDebug --stacktrace
+      - name: Test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            core/build/reports/tests/
+            app/build/reports/tests/
+      - name: Screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: app/screenshots/
+          if-no-files-found: ignore

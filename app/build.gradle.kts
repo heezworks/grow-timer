@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
+    alias(libs.plugins.roborazzi)
 }
 
 android {
@@ -33,10 +34,16 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    testOptions { unitTests.isReturnDefaultValues = true }
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+        unitTests.isIncludeAndroidResources = true // Robolectric이 문구·테마를 읽는다
+    }
 }
 
 room { schemaDirectory("$projectDir/schemas") }
+
+// 화면 사진은 app/screenshots/에. 기준 사진을 다시 찍을 때: ./gradlew :app:recordRoborazziDebug
+roborazzi { outputDir.set(file("screenshots")) }
 
 dependencies {
     implementation(project(":core"))
@@ -61,6 +68,16 @@ dependencies {
     implementation(libs.serialization.json)
     implementation(libs.coroutines.core)
 
+    // 시험은 JVM에서 돈다(Robolectric). 폰 없이 DB·타이머·화면 흐름·화면 사진까지 본다(D62)
     testImplementation(libs.junit)
     testImplementation(libs.coroutines.test)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.test.junit)
+    testImplementation(platform(libs.compose.bom))
+    testImplementation(libs.compose.ui.test.junit4)
+    debugImplementation(libs.compose.ui.test.manifest)
+    testImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi.compose)
+    testImplementation(libs.roborazzi.rule)
 }

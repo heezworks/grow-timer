@@ -22,3 +22,6 @@ keystore.properties
 node_modules/
 .wrangler/
 .dev.vars
+
+# 화면 사진 시험 결과(CI가 찍어 올린다)
+app/screenshots/

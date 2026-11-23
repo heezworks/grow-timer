@@ -85,10 +85,15 @@ class HomeViewModel(private val g: Graph) : ViewModel() {
 
     fun requestFinish(t: RunningTimer) {
         val r = TimerMath.read(t, now())
-        when {
-            r.needsCorrection -> { pause(t); ask.value = FinishAsk.OverMax }
-            r.activeMs < Rules.SHORT_SESSION_MS -> { pause(t); ask.value = FinishAsk.Short(TimerMath.durationSec(r)) }
-            else -> commit(t, TimerMath.durationSec(r))
+        val q = when {
+            r.needsCorrection -> FinishAsk.OverMax
+            r.activeMs < Rules.SHORT_SESSION_MS -> FinishAsk.Short(TimerMath.durationSec(r))
+            else -> return commit(t, TimerMath.durationSec(r))
+        }
+        // 묻는 동안 시간이 흐르지 않게 먼저 멈춘다. 멈춤이 저장된 뒤에 창을 띄운다(닫으면 resume이 뒤따르도록).
+        viewModelScope.launch {
+            g.timer.pause(nameOf(t.activityId))
+            ask.value = q
         }
     }
 

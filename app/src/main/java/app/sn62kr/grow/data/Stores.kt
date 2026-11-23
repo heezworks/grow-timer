@@ -15,8 +15,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 // 파일이 둘이다. settings는 자동 백업에 들어가고 timer는 빠진다(backup_rules.xml).
-private val Context.timerDs: DataStore<Preferences> by preferencesDataStore(name = "timer")
-private val Context.settingsDs: DataStore<Preferences> by preferencesDataStore(name = "settings")
+val Context.timerDataStore: DataStore<Preferences> by preferencesDataStore(name = "timer")
+val Context.settingsDataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 @Serializable
 private data class TimerJson(
@@ -32,8 +32,7 @@ private data class TimerJson(
 }
 
 /** 도는 타이머 하나(design.md 2절: 동시에 하나만). */
-class TimerStore(ctx: Context) {
-    private val ds = ctx.applicationContext.timerDs
+class TimerStore(private val ds: DataStore<Preferences>) {
     private val key = stringPreferencesKey("running")
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -48,8 +47,7 @@ class TimerStore(ctx: Context) {
     private fun decode(s: String) = runCatching { json.decodeFromString(TimerJson.serializer(), s).toModel() }.getOrNull()
 }
 
-class SettingsStore(ctx: Context) {
-    private val ds = ctx.applicationContext.settingsDs
+class SettingsStore(private val ds: DataStore<Preferences>) {
     private val onboarded = booleanPreferencesKey("onboarded")
     private val askedNotify = booleanPreferencesKey("askedNotify")
 
