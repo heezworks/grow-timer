@@ -7,4 +7,8 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
-tasks.test { useJUnitPlatform() }
+tasks.test {
+    useJUnitPlatform()
+    // 그림 갤러리(GalleryTest): -Pgallery=docs/checks/m3 을 주면 PNG를 거기에 쓴다
+    (project.findProperty("gallery") as String?)?.let { systemProperty("gallery.out", rootProject.file(it).absolutePath) }
+}
