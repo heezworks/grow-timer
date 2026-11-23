@@ -1,0 +1,22 @@
+// 친구 기능 서버(D59) + 익명 주간 신호(D63). Workers + D1(D70).
+// 비용 상한: 기기당 하루 스냅숏 1회, 친구 20명, 전역 하루 쓰기 예산, KILL 스위치(design.md 6절).
+{
+  "name": "grow-timer-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-01",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "grow-timer",
+      // 배포할 때 `wrangler d1 create grow-timer`가 준 id로 바꾼다
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": {
+    "DAILY_WRITE_BUDGET": "300000",
+    "KILL": "0",
+    "TEXT_REVIEWS": "0"
+  },
+  "observability": { "enabled": false }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "grow-timer-api",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --local",
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "typecheck": "tsc --noEmit",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261123.1",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.166.0"
+  }
+}
