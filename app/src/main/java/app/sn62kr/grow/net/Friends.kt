@@ -13,6 +13,7 @@ import app.sn62kr.grow.GrowApp
 import app.sn62kr.grow.core.draw.Pose
 import app.sn62kr.grow.core.model.Activity
 import app.sn62kr.grow.data.Records
+import app.sn62kr.grow.data.Reviews
 import app.sn62kr.grow.data.SettingsStore
 import app.sn62kr.grow.timer.Clock
 import kotlinx.coroutines.flow.first
@@ -40,12 +41,16 @@ data class FriendView(
     val gardenSeed: Long,
     val pose: Pose,
     val acts: List<Triple<String, Int, Long>>, // 아이콘 키, 색 번호, 초
+    val reviews: List<FriendReview> = emptyList(),
 )
+
+/** 친구의 후기 하나: 아이콘 키, 별, 줄 번호, 책 ID. */
+data class FriendReview(val icon: String, val stars: Int, val line: Int, val catalog: String?)
 
 data class FriendList(val me: String, val friends: List<FriendView>, val waiting: List<String>)
 
 /** 친구 기능의 앱 쪽(design.md 6절). 켜기 전에는 아무것도 보내지 않는다. */
-class Friends(private val api: FriendApi, private val records: Records, private val settings: SettingsStore, private val clock: Clock) {
+class Friends(private val api: FriendApi, private val records: Records, private val settings: SettingsStore, private val clock: Clock, private val reviews: Reviews? = null) {
     val available get() = api.enabled
 
     sealed interface Out<out T> {
@@ -133,7 +138,16 @@ class Friends(private val api: FriendApi, private val records: Records, private 
                     add(buildJsonObject { put("icon", iconFor(a)); put("color", a.colorIndex.coerceIn(0, 11)); put("sec", (perAct[a.id] ?: 0).coerceAtMost(1_000_000_000)) })
                 }
             })
-            put("reviews", JsonArray(emptyList()))
+            // 고르기식 후기: 별·줄 번호·책 ID만. 친구에게 보이기로 고른 것, 새것부터 20개(D59)
+            put("reviews", buildJsonArray {
+                reviews?.allOnce()?.filter { it.shared }?.take(20)?.forEach { r ->
+                    val a = acts.firstOrNull { it.id == r.activityId }
+                    add(buildJsonObject {
+                        put("kind", r.kind); put("icon", a?.let(::iconFor) ?: "custom"); put("stars", r.stars); put("line", r.line)
+                        r.catalogId?.let { put("catalog", it) }
+                    })
+                }
+            })
         }
     }
 
@@ -150,6 +164,9 @@ class Friends(private val api: FriendApi, private val records: Records, private 
                 code, daily, s["totalSec"]!!.jsonPrimitive.long, s["gardenSeed"]!!.jsonPrimitive.content.toLong(),
                 runCatching { Pose.valueOf(s["pose"]!!.jsonPrimitive.content.uppercase()) }.getOrDefault(Pose.REST),
                 s["acts"]?.jsonArray?.map { a -> a.jsonObject.let { Triple(it["icon"]!!.jsonPrimitive.content, it["color"]!!.jsonPrimitive.int, it["sec"]!!.jsonPrimitive.long) } } ?: emptyList(),
+                s["reviews"]?.jsonArray?.mapNotNull { r -> r.jsonObject.let { o ->
+                    runCatching { FriendReview(o["icon"]!!.jsonPrimitive.content, o["stars"]!!.jsonPrimitive.int, o["line"]!!.jsonPrimitive.int, o["catalog"]?.jsonPrimitive?.content) }.getOrNull()
+                } } ?: emptyList(),
             )
         }.getOrNull()
     }

@@ -62,6 +62,10 @@ import app.sn62kr.grow.net.Friends
 import app.sn62kr.grow.ui.SceneView
 import app.sn62kr.grow.ui.Text
 import app.sn62kr.grow.ui.YearGridView
+import app.sn62kr.grow.ui.ColorDot
+import app.sn62kr.grow.ui.review.Stars
+import app.sn62kr.grow.ui.review.lineText
+import app.sn62kr.grow.net.OpenLibrary
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -236,6 +240,21 @@ private fun FriendCard(vm: FriendsViewModel, f: FriendView) {
                 }
             }
             YearGridView(YearGrid.build(today.year, vm.weekStart(), f.daily, today), onDay = {}, modifier = Modifier.padding(start = 8.dp, bottom = 12.dp, top = 4.dp), cell = 10.dp)
+            // 고르기식 후기: 번호로 이 폰의 언어로 다시 쓴다. 책은 ID로 Open Library에서 제목을 받는다
+            f.reviews.take(5).forEach { r ->
+                val color = f.acts.firstOrNull { it.first == r.icon }?.second ?: 0
+                var title by remember(r.catalog) { mutableStateOf<String?>(null) }
+                LaunchedEffect(r.catalog) { r.catalog?.let { title = OpenLibrary.title(it) } }
+                Row(Modifier.padding(horizontal = 16.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    ColorDot(color)
+                    Column(Modifier.weight(1f)) {
+                        title?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
+                        Text(lineText(r.line), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    Stars(r.stars)
+                }
+            }
+            if (f.reviews.isNotEmpty()) androidx.compose.foundation.layout.Spacer(Modifier.padding(bottom = 8.dp))
         }
     }
 }

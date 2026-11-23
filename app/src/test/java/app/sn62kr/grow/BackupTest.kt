@@ -23,6 +23,7 @@ class BackupTest {
         runBlocking {
             g.settings.ensureGardenSeed(); g.settings.setWeekStart(1)
             val a = g.records.addActivity("기타", 0, "instrument"); val b = g.records.addActivity("독서", 1, "reading")
+            g.reviews.add(b.id, 5, 8, "OL45883W", "The Little Prince", shared = true)
             var d = today.minusDays(400)
             var i = 0
             while (!d.isAfter(today)) { g.records.addManual(if (i % 3 == 0) a.id else b.id, d, 600 + (i % 7) * 300, zone, today); d = d.plusDays(2); i++ }
@@ -40,6 +41,7 @@ class BackupTest {
         assertEquals(src.settings.gardenSeed.first(), dst.settings.gardenSeed.first()) // 빈 폰이면 정원도 같다
         assertEquals(1, dst.settings.weekStart.first()) // 설정도 온다(S4에서 빠졌던 것)
         assertTrue(dst.settings.isOnboarded.first())
+        assertEquals(listOf("OL45883W"), dst.reviews.allOnce().map { it.catalogId }) // 후기도 온다
     }
 
     @Test fun importTwiceAddsNothing() = runBlocking {

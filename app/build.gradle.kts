@@ -46,6 +46,7 @@ android {
 }
 
 room { schemaDirectory("$projectDir/schemas") }
+android.sourceSets.getByName("debug").assets.srcDir("$projectDir/schemas") // 이전 시험(MigrationTestHelper, Robolectric)이 읽는다. 릴리스에는 안 들어간다
 
 // 화면 사진은 app/screenshots/에. 기준 사진을 다시 찍을 때: ./gradlew :app:recordRoborazziDebug
 roborazzi { outputDir.set(file("screenshots")) }
@@ -79,6 +80,7 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.robolectric)
+    testImplementation(libs.room.testing)
     testImplementation(libs.androidx.test.core)
     testImplementation(libs.androidx.test.junit)
     testImplementation(platform(libs.compose.bom))

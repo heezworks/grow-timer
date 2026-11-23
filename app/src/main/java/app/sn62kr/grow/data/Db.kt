@@ -1,5 +1,6 @@
 package app.sn62kr.grow.data
 
+import androidx.room.AutoMigration
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Entity
@@ -16,7 +17,7 @@ import app.sn62kr.grow.core.model.Source
 import kotlinx.coroutines.flow.Flow
 
 // design.md 5절. id는 UUID 글자 — 백업 합치기가 INSERT … IGNORE 한 줄로 된다(S4).
-// 출시 전까지는 스키마 1을 그대로 고친다. 첫 출시 뒤부터 버전을 올리고 이전 규칙을 쓴다.
+// 스키마를 바꾸면 버전을 올리고 이전 규칙(자동 또는 손)을 쓴다 — 주인 폰에 실제 기록이 있다(M1 하루 사용).
 
 @Entity(tableName = "activity")
 data class ActivityEntity(
@@ -134,8 +135,48 @@ interface SessionDao {
     suspend fun deleteForActivity(activityId: String)
 }
 
-@Database(entities = [ActivityEntity::class, SessionEntity::class], version = 1, exportSchema = true)
+/**
+ * 고르기식 후기(D59): 별점 + 정해진 한 줄(번호) + 책은 Open Library의 작품 ID. 자유 글 칸은 없다.
+ * [title]은 고른 책 제목을 이 폰에만 적어 둔 것(친구에게는 ID만 간다).
+ */
+@Entity(tableName = "review", indices = [Index("activityId")])
+data class ReviewEntity(
+    @PrimaryKey val id: String,
+    val activityId: String,
+    val kind: String,          // preset | catalog
+    val stars: Int,
+    val line: Int,
+    val catalogId: String?,
+    val title: String?,
+    val shared: Boolean,
+    val createdAt: Long,
+)
+
+@Dao
+interface ReviewDao {
+    @Query("SELECT * FROM review ORDER BY createdAt DESC")
+    fun observeAll(): Flow<List<ReviewEntity>>
+
+    @Query("SELECT * FROM review ORDER BY createdAt DESC")
+    suspend fun all(): List<ReviewEntity>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(r: ReviewEntity): Long
+
+    @Query("DELETE FROM review WHERE id = :id")
+    suspend fun delete(id: String)
+
+    @Query("DELETE FROM review")
+    suspend fun deleteAll()
+}
+
+// 스키마 2(2026-11-24): 후기 표를 더했다. 표를 더하는 것은 자동 이전이 된다 — 폰에 있는 기록을 지우지 않는다.
+@Database(
+    entities = [ActivityEntity::class, SessionEntity::class, ReviewEntity::class], version = 2, exportSchema = true,
+    autoMigrations = [AutoMigration(from = 1, to = 2)],
+)
 abstract class GrowDb : RoomDatabase() {
     abstract fun activities(): ActivityDao
     abstract fun sessions(): SessionDao
+    abstract fun reviews(): ReviewDao
 }

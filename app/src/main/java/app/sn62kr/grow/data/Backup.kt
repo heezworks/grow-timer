@@ -31,6 +31,12 @@ data class BackupSession(
 )
 
 @Serializable
+data class BackupReview(
+    val id: String, val activityId: String, val stars: Int, val line: Int,
+    val catalogId: String? = null, val title: String? = null, val shared: Boolean = true, val createdAt: Long,
+)
+
+@Serializable
 data class BackupFile(
     val format: String,
     val version: Int,
@@ -38,6 +44,7 @@ data class BackupFile(
     val activities: List<BackupActivity>,
     val sessions: List<BackupSession>,
     val settings: BackupSettings = BackupSettings(),
+    val reviews: List<BackupReview> = emptyList(),
 )
 
 object Backup {
@@ -47,18 +54,19 @@ object Backup {
 
     private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
 
-    fun encode(acts: List<Activity>, sessions: List<Session>, settings: BackupSettings, now: Long): String = json.encodeToString(
+    fun encode(acts: List<Activity>, sessions: List<Session>, settings: BackupSettings, now: Long, reviews: List<Review> = emptyList()): String = json.encodeToString(
         BackupFile.serializer(),
         BackupFile(
             FORMAT, VERSION, now,
             acts.map { BackupActivity(it.id, it.name, it.colorIndex, it.iconKey, it.sortOrder, it.archived, it.createdAt) },
             sessions.map { BackupSession(it.id, it.activityId, it.startUtc, it.durationSec, it.localDate, it.source.key, it.createdAt, it.updatedAt) },
             settings,
+            reviews.map { BackupReview(it.id, it.activityId, it.stars, it.line, it.catalogId, it.title, it.shared, it.createdAt) },
         ),
     )
 
     sealed interface Read {
-        data class Ok(val activities: List<Activity>, val sessions: List<Session>, val settings: BackupSettings) : Read
+        data class Ok(val activities: List<Activity>, val sessions: List<Session>, val settings: BackupSettings, val reviews: List<Review> = emptyList()) : Read
         /** "「이름」 백업 파일이 아니에요" */
         data object NotOurs : Read
         /** "더 새 버전에서 만든 백업이에요" */
@@ -79,6 +87,8 @@ object Backup {
             f.activities.map { Activity(it.id, it.name, it.colorIndex, it.iconKey, it.sortOrder, it.archived, it.createdAt) },
             valid.map { Session(it.id, it.activityId, it.startUtc, it.durationSec, it.localDate, Source.of(it.source), it.createdAt, it.updatedAt) },
             f.settings,
+            f.reviews.filter { it.stars in 1..5 && it.line in 0 until PresetLines.COUNT }
+                .map { Review(it.id, it.activityId, it.stars, it.line, it.catalogId, it.title, it.shared, it.createdAt) },
         )
     }
 }

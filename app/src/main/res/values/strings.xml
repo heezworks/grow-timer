@@ -231,4 +231,32 @@
     <string name="fr_desc">Friend %1$s\'s terrace.</string>
     <string name="set_signal">Anonymous signal to improve the app</string>
     <string name="set_signal_note">Once a week, we receive only your install week and how many days you spent time. We can\'t tell who you are.</string>
+
+    <!-- 고르기식 후기(D59). 번호는 바꾸지 않는다 — 친구 폰이 번호로 읽는다 -->
+    <string name="review_line_0">I lost track of time.</string>
+    <string name="review_line_1">Enjoyed it slowly.</string>
+    <string name="review_line_2">Felt calm afterwards.</string>
+    <string name="review_line_3">Want to do it again.</string>
+    <string name="review_line_4">A bit hard, but good.</string>
+    <string name="review_line_5">Learned something new.</string>
+    <string name="review_line_6">I\'d recommend it.</string>
+    <string name="review_line_7">Short today, still nice.</string>
+    <string name="review_line_8">Read it to the end.</string>
+    <string name="review_line_9">Want to read it again.</string>
+    <string name="review_line_10">Reading it slowly.</string>
+    <string name="review_line_11">My hands are starting to remember.</string>
+    <string name="rv_title">Notes on %1$s</string>
+    <string name="rv_add">Add a note</string>
+    <string name="rv_none">No notes yet. Pick a few stars and a line.</string>
+    <string name="rv_stars">%1$d stars</string>
+    <string name="rv_pick_line">How was it?</string>
+    <string name="rv_book">Pick a book</string>
+    <string name="rv_book_change">Change book</string>
+    <string name="rv_search_hint">Title or author</string>
+    <string name="rv_search">Search</string>
+    <string name="rv_search_note">Book search uses Open Library. Only your search words go there.</string>
+    <string name="rv_search_none">No books found.</string>
+    <string name="rv_search_offline">Couldn\'t reach Open Library.</string>
+    <string name="rv_share">Show to friends</string>
+    <string name="rv_delete">Delete</string>
 </resources>

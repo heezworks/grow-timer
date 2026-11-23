@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -51,6 +52,13 @@ class YearViewModel(private val g: Graph) : ViewModel() {
 
     val widgetTipClosed: StateFlow<Boolean> = g.settings.widgetTipClosed.stateIn(viewModelScope, SharingStarted.Eagerly, true)
     fun closeWidgetTip() = viewModelScope.launch { g.settings.closeWidgetTip() }
+
+    val reviews: StateFlow<List<app.sn62kr.grow.data.Review>> = g.reviews.all.stateIn(viewModelScope, stay, emptyList())
+    val friendsOn: StateFlow<Boolean> = g.settings.friendCode.map { it != null }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+    val reviewing = MutableStateFlow<String?>(null) // 후기 시트를 연 활동
+    fun addReview(activityId: String, stars: Int, line: Int, catalogId: String?, title: String?, shared: Boolean) =
+        viewModelScope.launch { g.reviews.add(activityId, stars, line, catalogId, title, shared) }
+    fun deleteReview(id: String) = viewModelScope.launch { g.reviews.delete(id) }
 
     fun shiftYear(by: Int) { year.value += by }
     fun select(d: LocalDate?) { selectedDay.value = d }

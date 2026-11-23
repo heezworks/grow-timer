@@ -40,6 +40,8 @@ import app.sn62kr.grow.ui.DaySheet
 import app.sn62kr.grow.ui.GridLegend
 import app.sn62kr.grow.ui.Text
 import app.sn62kr.grow.ui.YearGridView
+import app.sn62kr.grow.ui.review.ReviewSheet
+import androidx.compose.foundation.clickable
 
 /** "한 해" 탭(spec 2-4). 성적표가 아니라 올해 다녀온 작은 휴가들 — 누적만, 연속 일수·달성률 없음(D22, Q11). */
 @Composable
@@ -106,9 +108,19 @@ fun YearScreen(vm: YearViewModel, modifier: Modifier = Modifier) {
                     leadingContent = { ColorDot(a?.colorIndex ?: 0, 14.dp) },
                     trailingContent = { Text(Text.duration(ctx, sec), style = MaterialTheme.typography.bodyLarge) },
                     colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.background),
-                    modifier = Modifier.padding(horizontal = 4.dp),
+                    modifier = Modifier.clickable { vm.reviewing.value = id }.padding(horizontal = 4.dp), // 누르면 그 활동의 후기
                 )
             }
+        }
+    }
+
+    val reviewing by vm.reviewing.collectAsStateWithLifecycle()
+    val reviews by vm.reviews.collectAsStateWithLifecycle()
+    val friendsOn by vm.friendsOn.collectAsStateWithLifecycle()
+    reviewing?.let { id ->
+        activities.firstOrNull { it.id == id }?.let { a ->
+            ReviewSheet(a, reviews.filter { it.activityId == id }, friendsOn, onDismiss = { vm.reviewing.value = null },
+                onAdd = { s, l, c, t, sh -> vm.addReview(id, s, l, c, t, sh) }, onDelete = { vm.deleteReview(it.id) })
         }
     }
 

@@ -100,6 +100,7 @@ class SettingsViewModel(private val g: Graph) : ViewModel() {
     fun deleteAll(ctx: android.content.Context) = viewModelScope.launch {
         g.timer.finish(null) // 도는 타이머도 버린다
         g.records.deleteAll()
+        g.reviews.deleteAll()
         messages.emit(ctx.getString(R.string.delete_all_done))
     }
 }

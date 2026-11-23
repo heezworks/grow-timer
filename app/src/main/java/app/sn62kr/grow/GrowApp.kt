@@ -9,6 +9,7 @@ import app.sn62kr.grow.data.settingsDataStore
 import app.sn62kr.grow.data.timerDataStore
 import app.sn62kr.grow.data.GrowDb
 import app.sn62kr.grow.data.Records
+import app.sn62kr.grow.data.Reviews
 import app.sn62kr.grow.data.SettingsStore
 import app.sn62kr.grow.data.TimerStore
 import app.sn62kr.grow.timer.Alarms
@@ -47,11 +48,12 @@ class Graph(
 ) {
     val appContext: Context = ctx.applicationContext
     val records = Records(db)
+    val reviews = Reviews(db)
     val timerStore = TimerStore(timerDs)
     val settings = SettingsStore(settingsDs)
     val notifier = Notifier(ctx) { notifyOn }
     val timer = TimerController(timerStore, records, clock, Alarms(ctx), notifier)
-    val friends = Friends(FriendApi(BuildConfig.API_BASE), records, settings, clock)
+    val friends = Friends(FriendApi(BuildConfig.API_BASE), records, settings, clock, reviews)
 
     /** 오늘(현지). 자정이 지나면 바뀐다 — 30초마다 본다. */
     val today: Flow<LocalDate> = flow { while (true) { emit(clock.today()); delay(30_000) } }.distinctUntilChanged()
@@ -77,13 +79,14 @@ class Graph(
     /** 백업 파일 글자. */
     suspend fun exportBackup(): String {
         val (a, s) = records.snapshot()
-        return Backup.encode(a, s, settings.export(), clock.now().wall)
+        return Backup.encode(a, s, settings.export(), clock.now().wall, reviews.allOnce())
     }
 
     /** 백업 가져오기(합치기). 이 폰에 기록이 없을 때만 정원 씨앗도 가져온다. */
     suspend fun importBackup(r: Backup.Read.Ok): Records.MergeResult {
         val empty = records.totalSec.first() == 0L
         val res = records.merge(r.activities, r.sessions)
+        reviews.merge(r.reviews)
         settings.import(r.settings, takeGardenSeed = empty)
         settings.setOnboarded()
         return res
