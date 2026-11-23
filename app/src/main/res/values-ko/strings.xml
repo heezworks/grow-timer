@@ -99,7 +99,10 @@
     <string name="tab_year">한 해</string>
     <string name="grid_less">적게</string>
     <string name="grid_more">많이</string>
-    <string name="grid_summary">%1$d일 · %2$s</string>
+    <string name="grid_summary">%1$s · %2$s</string>
+    <plurals name="grid_days">
+        <item quantity="other">%d일</item>
+    </plurals>
     <string name="grid_desc">%1$d년: %2$d일, %3$s. 칸을 누르면 그날을 볼 수 있어요.</string>
     <string name="year_prev">이전 해</string>
     <string name="year_next">다음 해</string>
@@ -147,7 +150,7 @@
     <string name="share">공유</string>
     <string name="save_image">저장</string>
     <string name="saved_image">사진 폴더에 저장했어요.</string>
-    <string name="card_year">%3$d년 · %1$d일 · %2$s</string>
+    <string name="card_year">%1$d년 · %2$s · %3$s</string>
 
     <string name="settings_title">설정</string>
     <string name="set_activities">활동</string>

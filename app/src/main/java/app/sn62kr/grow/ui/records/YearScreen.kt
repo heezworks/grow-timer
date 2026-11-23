@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
@@ -88,7 +89,7 @@ fun YearScreen(vm: YearViewModel, modifier: Modifier = Modifier) {
             item {
                 YearGridView(g, onDay = vm::select, modifier = Modifier.padding(start = 12.dp, end = 0.dp, top = 12.dp))
                 Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text(stringResource(R.string.grid_summary, g.filledDays, Text.duration(ctx, g.totalSec)),
+                    Text(stringResource(R.string.grid_summary, pluralStringResource(R.plurals.grid_days, g.filledDays, g.filledDays), Text.duration(ctx, g.totalSec)),
                         style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
                     GridLegend()
                 }

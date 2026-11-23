@@ -111,7 +111,11 @@
     <string name="tab_year">Year</string>
     <string name="grid_less">Less</string>
     <string name="grid_more">More</string>
-    <string name="grid_summary">%1$d days · %2$s</string>
+    <string name="grid_summary">%1$s · %2$s</string>
+    <plurals name="grid_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
     <string name="grid_desc">%1$d: %2$d days, %3$s. Tap a day to see it.</string>
     <string name="year_prev">Previous year</string>
     <string name="year_next">Next year</string>
@@ -162,7 +166,7 @@
     <string name="share">Share</string>
     <string name="save_image">Save</string>
     <string name="saved_image">Saved to Pictures.</string>
-    <string name="card_year">%3$d · %1$d days · %2$s</string>
+    <string name="card_year">%1$d · %2$s · %3$s</string>
 
     <!-- 설정(M5, spec 2-8) -->
     <string name="settings_title">Settings</string>

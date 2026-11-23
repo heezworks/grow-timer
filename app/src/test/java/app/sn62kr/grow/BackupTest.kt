@@ -81,3 +81,7 @@ class BackupTest {
         assertTrue(g.records.allActivities.first().isEmpty())
     }
 }
+
+class PresetLinesTest {
+    @org.junit.Test fun linesMatchCount() = org.junit.Assert.assertEquals(app.sn62kr.grow.data.PresetLines.COUNT, app.sn62kr.grow.ui.review.LINES.size)
+}

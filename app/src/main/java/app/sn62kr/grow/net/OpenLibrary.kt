@@ -23,13 +23,18 @@ object OpenLibrary {
 
     private fun get(url: String): JsonObject? = runCatching {
         val c = URL(url).openConnection() as HttpURLConnection
-        c.connectTimeout = 8_000; c.readTimeout = 10_000
+        c.connectTimeout = 10_000; c.readTimeout = 15_000 // Open Library는 가끔 10초 넘게 걸린다(M6 에뮬레이터에서 한 번 넘었다)
         c.setRequestProperty("user-agent", "grow-timer-android (open source)") // 이름·연락처는 넣지 않는다
-        try { if (c.responseCode != 200) null else json.parseToJsonElement(c.inputStream.use { it.readBytes().decodeToString() }) as JsonObject } finally { c.disconnect() }
-    }.getOrNull()
+        try {
+            val code = c.responseCode
+            if (code != 200) { android.util.Log.w("OpenLibrary", "HTTP $code"); null }
+            else json.parseToJsonElement(c.inputStream.use { it.readBytes().decodeToString() }) as JsonObject
+        } finally { c.disconnect() }
+    }.onFailure { android.util.Log.w("OpenLibrary", "실패: ${it.javaClass.name}: ${it.message}") }.getOrNull() // 검색어는 남기지 않는다
 
     suspend fun search(q: String): List<Book>? = withContext(Dispatchers.IO) {
-        val body = get("https://openlibrary.org/search.json?limit=12&fields=key,title,author_name,first_publish_year&q=" + URLEncoder.encode(q.trim(), "UTF-8")) ?: return@withContext null
+        val url = "https://openlibrary.org/search.json?limit=12&fields=key,title,author_name,first_publish_year&q=" + URLEncoder.encode(q.trim(), "UTF-8")
+        val body = get(url) ?: get(url) ?: return@withContext null // 느리면 한 번 더
         body["docs"]?.jsonArray?.mapNotNull { d ->
             val o = d.jsonObject
             val key = o["key"]?.jsonPrimitive?.content ?: return@mapNotNull null // "/works/OL45883W"

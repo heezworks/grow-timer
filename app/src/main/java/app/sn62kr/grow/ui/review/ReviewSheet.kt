@@ -50,13 +50,18 @@ import app.sn62kr.grow.data.Review
 import app.sn62kr.grow.net.OpenLibrary
 import kotlinx.coroutines.launch
 
-/** 정해진 한 줄의 문구(번호 → 언어별 글). */
+/**
+ * 정해진 한 줄의 문구(번호 → 언어별 글). 번호 순서를 바꾸지 않는다(친구 폰이 번호로 읽는다).
+ * 이름으로 찾지(getIdentifier) 않고 R을 직접 쓴다 — 릴리스의 리소스 줄이기가 이름으로만 쓰는 글을 지웠다(M6에서 찾음).
+ */
+internal val LINES = intArrayOf(
+    R.string.review_line_0, R.string.review_line_1, R.string.review_line_2, R.string.review_line_3,
+    R.string.review_line_4, R.string.review_line_5, R.string.review_line_6, R.string.review_line_7,
+    R.string.review_line_8, R.string.review_line_9, R.string.review_line_10, R.string.review_line_11,
+)
+
 @Composable
-fun lineText(i: Int): String {
-    val ctx = LocalContext.current
-    val id = ctx.resources.getIdentifier("review_line_$i", "string", ctx.packageName)
-    return if (id != 0) stringResource(id) else ""
-}
+fun lineText(i: Int): String = LINES.getOrNull(i)?.let { stringResource(it) } ?: ""
 
 /** ★★★☆☆ (읽어 주는 글은 "별 3개"). */
 @Composable

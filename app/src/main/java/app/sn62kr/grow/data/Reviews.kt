@@ -34,5 +34,5 @@ class Reviews(private val db: GrowDb, private val clock: () -> Long = System::cu
 
 /** 정해진 한 줄의 번호. 문구는 strings.xml의 review_line_N(언어마다). 번호는 바꾸지 않는다 — 친구 폰이 번호로 읽는다. */
 object PresetLines {
-    const val COUNT = 12
+    const val COUNT = 12 // ReviewSheet의 LINES와 같아야 한다
 }

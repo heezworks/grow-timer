@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -21,6 +23,14 @@ android {
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    // 업로드 키는 저장소 밖(keystore.properties, .gitignore). 없으면 릴리스를 디버그 키로 서명한다 — 이 맥에서 R8 결과를 시험하는 용도뿐이다.
+    val ks = rootProject.file("keystore.properties").takeIf { it.exists() }?.let { f -> Properties().apply { f.inputStream().use { load(it) } } }
+    signingConfigs {
+        if (ks != null) create("upload") {
+            storeFile = file(ks.getProperty("storeFile")); storePassword = ks.getProperty("storePassword")
+            keyAlias = ks.getProperty("keyAlias"); keyPassword = ks.getProperty("keyPassword")
+        }
+    }
     buildTypes {
         // 친구 서버 주소. 디버그는 이 맥의 wrangler dev(폰은 `adb reverse tcp:8787 tcp:8787`). 릴리스는 배포한 뒤 넣는다 — 비어 있으면 친구 탭이 "준비 중".
         debug {
@@ -29,6 +39,7 @@ android {
         }
         release {
             buildConfigField("String", "API_BASE", "\"\"")
+            signingConfig = if (ks != null) signingConfigs.getByName("upload") else signingConfigs.getByName("debug")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")

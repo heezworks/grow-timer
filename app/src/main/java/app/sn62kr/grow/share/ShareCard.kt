@@ -48,13 +48,14 @@ object ShareCard {
         c.save(); c.translate(146f, 124f); AndroidRenderer.draw(c, scene, 780f); c.restore()
         val ink = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = 0xFF3A342C.toInt(); textSize = 46f; typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL) }
         val dim = Paint(ink).apply { color = 0xFF7A7166.toInt(); textSize = 32f }
-        val caption = ctx.getString(R.string.polaroid_caption, p.activity?.name ?: "", Text.duration(ctx, p.session.durationSec.toLong()).replace("⁠", ""))
+        val caption = ctx.getString(R.string.polaroid_caption, p.activity?.name ?: "", Text.duration(ctx, p.session.durationSec.toLong()).replace("\u2060", ""))
         c.drawText(caption, 146f, 966f, ink)
         c.drawText(LocalDate.parse(p.session.localDate).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)), 146f, 1012f, dim)
         c.restore()
         // 그해 격자와 합계
         val label = Paint(ink).apply { textSize = 38f }
-        c.drawText(ctx.getString(R.string.card_year, year.filledDays, Text.duration(ctx, year.totalSec).replace("⁠", ""), year.year), 110f, 1130f, label)
+        val days = ctx.resources.getQuantityString(R.plurals.grid_days, year.filledDays, year.filledDays)
+        c.drawText(ctx.getString(R.string.card_year, year.year, days, Text.duration(ctx, year.totalSec).replace("\u2060", "")), 110f, 1130f, label)
         val grid = GridArt.build(year, GridPalette.LIGHT)
         c.save(); c.translate(110f, 1156f); AndroidRenderer.draw(c, grid, 860f); c.restore()
         val foot = Paint(dim).apply { textSize = 28f; textAlign = Paint.Align.RIGHT }
