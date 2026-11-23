@@ -39,7 +39,8 @@ class YearTest {
     private val g = testGraph(app, clock)
     private val zone = ZoneId.of("Asia/Seoul")
 
-    private fun waitFor(what: () -> Boolean) = compose.waitUntil(15_000) // CI 기계가 느리다 { shadowOf(Looper.getMainLooper()).idle(); what() }
+    // 15초: CI 기계가 느리다
+    private fun waitFor(what: () -> Boolean) = compose.waitUntil(15_000) { shadowOf(Looper.getMainLooper()).idle(); what() }
     private fun waitText(t: String) = waitFor { compose.onAllNodesWithText(t).fetchSemanticsNodes().isNotEmpty() }
 
     /** 2025-11 ~ 2026-11, 사흘에 한 번 30분씩(약 120건). 활동 둘. */
