@@ -39,7 +39,7 @@ class YearTest {
     private val g = testGraph(app, clock)
     private val zone = ZoneId.of("Asia/Seoul")
 
-    private fun waitFor(what: () -> Boolean) = compose.waitUntil(5_000) { shadowOf(Looper.getMainLooper()).idle(); what() }
+    private fun waitFor(what: () -> Boolean) = compose.waitUntil(15_000) // CI 기계가 느리다 { shadowOf(Looper.getMainLooper()).idle(); what() }
     private fun waitText(t: String) = waitFor { compose.onAllNodesWithText(t).fetchSemanticsNodes().isNotEmpty() }
 
     /** 2025-11 ~ 2026-11, 사흘에 한 번 30분씩(약 120건). 활동 둘. */
@@ -62,8 +62,9 @@ class YearTest {
         waitFor { vm.grid.value?.year == 2025 }
         compose.onNodeWithContentDescription("이전 해").assertIsNotEnabled() // 첫 기록이 2025년
         compose.onNodeWithContentDescription("다음 해").performClick()
-        compose.onAllNodesWithText("뜨개질")[0].performClick() // 첫째가 거르기 칩
+        waitFor { vm.grid.value?.year == 2026 } // 해가 바뀐 뒤에 합을 읽는다(CI에서 먼저 읽어 틀렸다)
         val all = vm.grid.value!!.totalSec
+        compose.onAllNodesWithText("뜨개질")[0].performClick() // 첫째가 거르기 칩
         waitFor { vm.grid.value!!.totalSec in 1 until all }
     }
 

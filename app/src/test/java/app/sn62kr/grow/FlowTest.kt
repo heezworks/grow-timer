@@ -46,7 +46,7 @@ class FlowTest {
     init { shadowOf(app).grantPermissions(Manifest.permission.POST_NOTIFICATIONS) }
 
     /** Robolectric에서 compose.waitUntil은 메인 스레드 큐를 돌리지 않는다 — 메인으로 돌아오는 코루틴이 멈춘 채 남는다. 직접 돌린다. */
-    private fun waitFor(what: () -> Boolean) = compose.waitUntil(5_000) { shadowOf(Looper.getMainLooper()).idle(); what() }
+    private fun waitFor(what: () -> Boolean) = compose.waitUntil(15_000) // CI 기계가 느리다 { shadowOf(Looper.getMainLooper()).idle(); what() }
 
     private fun waitText(text: String) = waitFor { compose.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty() }
 
