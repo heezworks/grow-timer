@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import app.sn62kr.grow.core.time.RunningTimer
@@ -53,6 +54,30 @@ class SettingsStore(private val ds: DataStore<Preferences>) {
     private val askedNotify = booleanPreferencesKey("askedNotify")
 
     private val gardenSeedKey = longPreferencesKey("gardenSeed")
+    private val weekStartKey = intPreferencesKey("weekStart") // 0 = 기기 로케일, 1~7 = 월~일
+    private val notifyKey = booleanPreferencesKey("notify")
+    private val lastBackupKey = longPreferencesKey("lastBackupAt")
+
+    val weekStart: Flow<Int> = ds.data.map { it[weekStartKey] ?: 0 }
+    /** 알림 켬/끔(조용한 알림과 정한 시간 알림 둘 다). 기본 켬. 시스템 권한과 따로다. */
+    val notify: Flow<Boolean> = ds.data.map { it[notifyKey] ?: true }
+    val lastBackupAt: Flow<Long> = ds.data.map { it[lastBackupKey] ?: 0L }
+
+    suspend fun setWeekStart(v: Int) = ds.edit { it[weekStartKey] = v }
+    suspend fun setNotify(v: Boolean) = ds.edit { it[notifyKey] = v }
+    suspend fun setLastBackup(at: Long) = ds.edit { it[lastBackupKey] = at }
+
+    /** 백업 파일에 넣을 설정. */
+    suspend fun export(): BackupSettings = ds.data.first().let { p ->
+        BackupSettings(p[weekStartKey] ?: 0, p[notifyKey] ?: true, p[gardenSeedKey] ?: 0L)
+    }
+
+    /** 백업에서 되살린다. 정원 씨앗은 이 폰에 기록이 없을 때만 바꾼다 — 있으면 지금 화분 모양이 갑자기 바뀐다. */
+    suspend fun import(s: BackupSettings, takeGardenSeed: Boolean) = ds.edit { p ->
+        p[weekStartKey] = s.weekStart; p[notifyKey] = s.notify
+        if (takeGardenSeed && s.gardenSeed != 0L) p[gardenSeedKey] = s.gardenSeed
+    }
+
     private val widgetTipKey = booleanPreferencesKey("widgetTipClosed")
     val widgetTipClosed: Flow<Boolean> = ds.data.map { it[widgetTipKey] ?: false }
     suspend fun closeWidgetTip() = ds.edit { it[widgetTipKey] = true }

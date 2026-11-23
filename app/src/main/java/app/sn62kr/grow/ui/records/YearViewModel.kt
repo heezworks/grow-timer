@@ -34,10 +34,10 @@ class YearViewModel(private val g: Graph) : ViewModel() {
     private val daily = filter.flatMapLatest { g.records.daily(it) }
     private val allDaily = g.records.daily(null)
 
-    val grid: StateFlow<YearGrid?> = combine(year, daily, today) { y, d, t -> YearGrid.build(y, g.weekStart(), d, t) }
+    val grid: StateFlow<YearGrid?> = combine(year, daily, today, g.weekStartFlow) { y, d, t, w -> YearGrid.build(y, w, d, t) }
         .stateIn(viewModelScope, stay, null)
 
-    val totals: StateFlow<Totals?> = combine(daily, today) { d, t -> Sums.totals(d, t, g.weekStart()) }.stateIn(viewModelScope, stay, null)
+    val totals: StateFlow<Totals?> = combine(daily, today, g.weekStartFlow) { d, t, w -> Sums.totals(d, t, w) }.stateIn(viewModelScope, stay, null)
 
     /** 넘겨 볼 수 있는 해: 첫 기록의 해 ~ 올해. 기록이 없으면 null(빈 상태). */
     val years: StateFlow<IntRange?> = combine(allDaily, today) { d, t -> d.keys.minOrNull()?.let { it.year..t.year } }

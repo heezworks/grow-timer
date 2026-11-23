@@ -70,6 +70,7 @@ class Records(private val db: GrowDb, private val clock: () -> Long = System::cu
         return s
     }
 
+
     sealed interface AddResult {
         data class Added(val session: Session) : AddResult
         data object OverDay : AddResult
@@ -95,6 +96,21 @@ class Records(private val db: GrowDb, private val clock: () -> Long = System::cu
 
     suspend fun deleteSession(id: String) = sessions.delete(id)
 
+    suspend fun snapshot(): Pair<List<Activity>, List<Session>> = activities.all().map { it.toModel() } to sessions.all().map { it.toModel() }
+
+    data class MergeResult(val activitiesAdded: Int, val sessionsAdded: Int, val skipped: Int)
+
+    /** 백업 합치기: 같은 id는 한 번만(design.md 1절 Q17). 한 트랜잭션 — 중간에 깨지면 아무것도 안 들어간다. */
+    suspend fun merge(acts: List<Activity>, list: List<Session>): MergeResult = db.withTransaction {
+        var a = 0; var s = 0; var skip = 0
+        for (x in acts) if (activities.insert(x.toEntity()) == -1L) skip++ else a++
+        for (x in list) if (sessions.insert(x.toEntity()) == -1L) skip++ else s++
+        MergeResult(a, s, skip)
+    }
+
+    /** 모든 기록 지우기(설정, 두 번 묻는다). */
+    suspend fun deleteAll() = db.withTransaction { sessions.deleteAll(); activities.deleteAll() }
+
     /** 지우기 되돌리기. 같은 id로 다시 넣는다. */
-    suspend fun restoreSession(s: Session) = sessions.insert(s.toEntity())
+    suspend fun restoreSession(s: Session) { sessions.insert(s.toEntity()) }
 }

@@ -23,6 +23,9 @@ import app.sn62kr.grow.R
 import app.sn62kr.grow.ui.records.YearScreen
 import app.sn62kr.grow.ui.plant.PlantScreen
 import app.sn62kr.grow.ui.album.AlbumScreen
+import app.sn62kr.grow.ui.settings.LicensesScreen
+import app.sn62kr.grow.ui.settings.SettingsScreen
+import app.sn62kr.grow.ui.settings.SettingsViewModel
 import app.sn62kr.grow.ui.album.AlbumViewModel
 import app.sn62kr.grow.ui.plant.PlantViewModel
 import app.sn62kr.grow.ui.records.YearViewModel
@@ -75,6 +78,8 @@ private object Routes {
     const val ACTIVITIES = "activities"
     const val PLANT = "plant"
     const val ALBUM = "album"
+    const val SETTINGS = "settings"
+    const val LICENSES = "licenses"
 }
 
 /** 아래 탭: 홈 · 한 해. 친구 탭은 M4b에서(design.md 3절). */
@@ -110,7 +115,7 @@ private fun AppNav(g: Graph) {
             }
         }
         composable(Routes.HOME) {
-            HomeRoute(viewModel { HomeViewModel(g) }, onActivities = { nav.navigate(Routes.ACTIVITIES) }, onPlant = { nav.navigate(Routes.PLANT) })
+            HomeRoute(viewModel { HomeViewModel(g) }, onActivities = { nav.navigate(Routes.SETTINGS) }, onPlant = { nav.navigate(Routes.PLANT) })
         }
         composable(Routes.YEAR) {
             YearScreen(viewModel { YearViewModel(g) }, Modifier.statusBarsPadding())
@@ -121,6 +126,11 @@ private fun AppNav(g: Graph) {
         composable(Routes.ALBUM) {
             AlbumScreen(viewModel { AlbumViewModel(g) }, onBack = { nav.popBackStack() })
         }
+        composable(Routes.SETTINGS) {
+            SettingsScreen(viewModel { SettingsViewModel(g) }, onBack = { nav.popBackStack() },
+                onActivities = { nav.navigate(Routes.ACTIVITIES) }, onLicenses = { nav.navigate(Routes.LICENSES) })
+        }
+        composable(Routes.LICENSES) { LicensesScreen(onBack = { nav.popBackStack() }) }
         composable(Routes.ACTIVITIES) {
             ActivitiesScreen(viewModel { ActivitiesViewModel(g) }, onBack = { nav.popBackStack() })
         }

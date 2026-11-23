@@ -56,8 +56,8 @@ class HomeViewModel(private val g: Graph) : ViewModel() {
 
     /** 홈의 격자는 올해·전체 활동. 해 넘기기와 활동별은 "한 해" 탭에서. */
     private val daily = g.records.daily(null)
-    val grid: StateFlow<YearGrid?> = combine(daily, today) { d, t -> YearGrid.build(t.year, g.weekStart(), d, t) }.stateIn(viewModelScope, stay, null)
-    val yearSec: StateFlow<Long> = combine(daily, today) { d, t -> Sums.totals(d, t, g.weekStart()).yearSec }.stateIn(viewModelScope, stay, 0L)
+    val grid: StateFlow<YearGrid?> = combine(daily, today, g.weekStartFlow) { d, t, w -> YearGrid.build(t.year, w, d, t) }.stateIn(viewModelScope, stay, null)
+    val yearSec: StateFlow<Long> = combine(daily, today, g.weekStartFlow) { d, t, w -> Sums.totals(d, t, w).yearSec }.stateIn(viewModelScope, stay, 0L)
 
     val garden: StateFlow<GardenState?> = g.garden.stateIn(viewModelScope, SharingStarted.Eagerly, null)
     val gardenSeed: StateFlow<Long> = g.settings.gardenSeed.stateIn(viewModelScope, SharingStarted.Eagerly, 0L)

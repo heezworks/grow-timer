@@ -19,10 +19,13 @@ import app.sn62kr.grow.ui.Text
  * 알림 둘: 도는 동안 조용한 알림 하나(포그라운드 서비스 아님, D44), 목표 시간이 됐을 때 하나.
  * 재촉하는 알림은 없다(D28). 권한이 없으면 띄우지 않고 타이머는 그대로 돈다(S3 ⑩).
  */
-class Notifier(private val ctx: Context) {
+class Notifier(private val ctx: Context, private val enabled: () -> Boolean = { true }) {
     private val nm = ctx.getSystemService(NotificationManager::class.java)
 
-    fun canNotify() = Build.VERSION.SDK_INT < 33 ||
+    /** 시스템 권한 + 앱 설정(알림 켬/끔) 둘 다. */
+    fun canNotify() = enabled() && hasPermission()
+
+    fun hasPermission() = Build.VERSION.SDK_INT < 33 ||
         ctx.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
 
     private fun channels() {

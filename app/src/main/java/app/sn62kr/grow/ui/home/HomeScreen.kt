@@ -133,7 +133,7 @@ private fun HomeScreen(vm: HomeViewModel, pad: PaddingValues, onActivities: () -
                         Modifier.fillMaxWidth().clickable(onClick = onPlant), cropTop = 34f) // 하늘을 잘라 낮게(파라솔 꼭대기까지는 남긴다)
                 }
                 IconButton(onClick = onActivities, modifier = Modifier.align(Alignment.TopEnd).padding(4.dp)) {
-                    Icon(Icons.Default.Settings, stringResource(R.string.home_activities), tint = Color(0xFF1C2C44))
+                    Icon(Icons.Default.Settings, stringResource(R.string.settings_title), tint = Color(0xFF1C2C44))
                 }
             }
         }

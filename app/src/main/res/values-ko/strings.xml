@@ -148,4 +148,36 @@
     <string name="save_image">저장</string>
     <string name="saved_image">사진 폴더에 저장했어요.</string>
     <string name="card_year">%3$d년 · %1$d일 · %2$s</string>
+
+    <string name="settings_title">설정</string>
+    <string name="set_activities">활동</string>
+    <string name="set_backup">백업</string>
+    <string name="set_export">파일로 내보내기</string>
+    <string name="set_import">파일에서 가져오기</string>
+    <string name="set_last_backup">마지막 내보내기 %1$s</string>
+    <string name="set_never_backup">아직 파일로 내보낸 적이 없어요</string>
+    <string name="set_backup_note">기기 백업이 켜져 있으면 자동으로도 백업돼요.</string>
+    <string name="set_exported">내보냈어요.</string>
+    <string name="set_imported">활동 %1$d개와 기록 %2$d건을 더했어요. 이미 있던 %3$d건은 건너뛰었어요.</string>
+    <string name="import_not_ours">이 파일은 %1$s 백업 파일이 아니에요.</string>
+    <string name="import_newer">더 새 버전에서 만든 백업이에요. 앱을 업데이트해 주세요.</string>
+    <string name="import_broken">파일을 읽지 못했어요.</string>
+    <string name="set_notify">알림</string>
+    <string name="set_notify_note">타이머가 도는 동안 조용한 알림 하나, 정한 시간이 됐을 때 하나. 재촉하는 알림은 없어요.</string>
+    <string name="set_notify_system">시스템 설정에서 켜기</string>
+    <string name="set_week_start">주의 시작</string>
+    <string name="week_locale">기기 설정 따르기</string>
+    <string name="set_privacy">기록은 이 폰에만 있어요. 어디로도 보내지 않아요.</string>
+    <string name="set_licenses">오픈소스 라이선스</string>
+    <string name="set_feedback">문제 보내기</string>
+    <string name="set_version">버전 %1$s</string>
+    <string name="set_delete_all">모든 기록 지우기</string>
+    <string name="delete_all_ask">되돌릴 수 없어요. 먼저 백업할까요?</string>
+    <string name="delete_all_backup">먼저 백업하기</string>
+    <string name="delete_all_go">그냥 지우기</string>
+    <string name="delete_all_confirm">모든 활동과 기록을 지울까요?</string>
+    <string name="delete_all_done">모두 지웠어요.</string>
+    <string name="licenses_title">오픈소스 라이선스</string>
+    <string name="licenses_app">이 앱은 MIT 라이선스로 공개된 오픈소스예요.</string>
+    <string name="feedback_subject">문제 보내기</string>
 </resources>

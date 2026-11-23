@@ -20,6 +20,8 @@ import kotlinx.coroutines.delay
 import app.sn62kr.grow.core.garden.Garden
 import app.sn62kr.grow.core.garden.GardenState
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import app.sn62kr.grow.data.Backup
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -41,10 +43,11 @@ class Graph(
     timerDs: DataStore<Preferences> = ctx.applicationContext.timerDataStore,
     settingsDs: DataStore<Preferences> = ctx.applicationContext.settingsDataStore,
 ) {
+    val appContext: Context = ctx.applicationContext
     val records = Records(db)
     val timerStore = TimerStore(timerDs)
     val settings = SettingsStore(settingsDs)
-    val notifier = Notifier(ctx)
+    val notifier = Notifier(ctx) { notifyOn }
     val timer = TimerController(timerStore, records, clock, Alarms(ctx), notifier)
 
     /** 오늘(현지). 자정이 지나면 바뀐다 — 30초마다 본다. */
@@ -53,8 +56,35 @@ class Graph(
     /** 정원(식물·정물): 쌓인 시간 전체 + 정원 씨앗에서 계산(design.md 5절). */
     val garden: Flow<GardenState> = combine(records.totalSec, settings.gardenSeed) { t, s -> Garden.of(t, s) }
 
-    /** 주의 첫날. 기기 로케일을 따른다(design.md 2절). 설정에서 바꾸기는 M5. */
-    fun weekStart(): DayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
+    /** 주의 첫날: 설정이 0이면 기기 로케일(design.md 2절). 화면은 [weekStartFlow]로 바뀜을 받는다. */
+    val weekStartFlow: Flow<DayOfWeek> = settings.weekStart.map { if (it in 1..7) DayOfWeek.of(it) else WeekFields.of(Locale.getDefault()).firstDayOfWeek }
+        .distinctUntilChanged()
+    @Volatile private var weekStartNow: DayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
+    fun weekStart(): DayOfWeek = weekStartNow
+
+    /** 알림 켬/끔 설정의 지금 값(Notifier가 묻는다). */
+    @Volatile var notifyOn = true; private set
+
+    /** 앱이 켜질 때 한 번: 설정 값을 따라간다. */
+    fun follow(scope: kotlinx.coroutines.CoroutineScope) {
+        scope.launch { weekStartFlow.collect { weekStartNow = it } }
+        scope.launch { settings.notify.collect { notifyOn = it } }
+    }
+
+    /** 백업 파일 글자. */
+    suspend fun exportBackup(): String {
+        val (a, s) = records.snapshot()
+        return Backup.encode(a, s, settings.export(), clock.now().wall)
+    }
+
+    /** 백업 가져오기(합치기). 이 폰에 기록이 없을 때만 정원 씨앗도 가져온다. */
+    suspend fun importBackup(r: Backup.Read.Ok): Records.MergeResult {
+        val empty = records.totalSec.first() == 0L
+        val res = records.merge(r.activities, r.sessions)
+        settings.import(r.settings, takeGardenSeed = empty)
+        settings.setOnboarded()
+        return res
+    }
 
     suspend fun rebaseTimer() {
         val names = records.allActivities.first().associate { it.id to it.name }
@@ -75,5 +105,7 @@ class GrowApp : Application() {
             graph.records.allChrono.drop(1).collectLatest { delay(500); WidgetUpdates.all(this@GrowApp) }
         }
         WidgetUpdates.scheduleMidnight(this)
+        @OptIn(kotlinx.coroutines.DelicateCoroutinesApi::class)
+        graph.follow(kotlinx.coroutines.GlobalScope)
     }
 }

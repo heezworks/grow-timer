@@ -64,7 +64,13 @@ interface ActivityDao {
     suspend fun get(id: String): ActivityEntity?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(a: ActivityEntity)
+    suspend fun insert(a: ActivityEntity): Long
+
+    @Query("SELECT * FROM activity")
+    suspend fun all(): List<ActivityEntity>
+
+    @Query("DELETE FROM activity")
+    suspend fun deleteAll()
 
     @Update
     suspend fun update(a: ActivityEntity)
@@ -108,8 +114,15 @@ interface SessionDao {
     @Query("SELECT COALESCE(SUM(durationSec), 0) FROM session WHERE activityId = :activityId")
     suspend fun activitySum(activityId: String): Long
 
+    /** 같은 id가 있으면 건너뛴다(-1). 백업 합치기가 이것 하나로 된다(S4). */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(s: SessionEntity)
+    suspend fun insert(s: SessionEntity): Long
+
+    @Query("SELECT * FROM session ORDER BY startUtc")
+    suspend fun all(): List<SessionEntity>
+
+    @Query("DELETE FROM session")
+    suspend fun deleteAll()
 
     @Update
     suspend fun update(s: SessionEntity)

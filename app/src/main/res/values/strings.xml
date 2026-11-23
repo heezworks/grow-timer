@@ -163,4 +163,37 @@
     <string name="save_image">Save</string>
     <string name="saved_image">Saved to Pictures.</string>
     <string name="card_year">%3$d · %1$d days · %2$s</string>
+
+    <!-- 설정(M5, spec 2-8) -->
+    <string name="settings_title">Settings</string>
+    <string name="set_activities">Activities</string>
+    <string name="set_backup">Backup</string>
+    <string name="set_export">Save to a file</string>
+    <string name="set_import">Bring in from a file</string>
+    <string name="set_last_backup">Last saved %1$s</string>
+    <string name="set_never_backup">Not saved to a file yet</string>
+    <string name="set_backup_note">If device backup is on, your records are also backed up automatically.</string>
+    <string name="set_exported">Saved.</string>
+    <string name="set_imported">Added %1$d activities and %2$d sessions. Skipped %3$d already here.</string>
+    <string name="import_not_ours">This isn\'t a %1$s backup file.</string>
+    <string name="import_newer">This backup was made with a newer version. Please update the app.</string>
+    <string name="import_broken">Couldn\'t read this file.</string>
+    <string name="set_notify">Notifications</string>
+    <string name="set_notify_note">A quiet notice while the timer runs, and one when your set time is up. Never reminders.</string>
+    <string name="set_notify_system">Turn on in system settings</string>
+    <string name="set_week_start">First day of the week</string>
+    <string name="week_locale">Follow the device</string>
+    <string name="set_privacy">Your records stay on this phone. Nothing is sent anywhere.</string>
+    <string name="set_licenses">Open source licenses</string>
+    <string name="set_feedback">Send a problem</string>
+    <string name="set_version">Version %1$s</string>
+    <string name="set_delete_all">Delete all records</string>
+    <string name="delete_all_ask">This can\'t be undone. Back up first?</string>
+    <string name="delete_all_backup">Back up first</string>
+    <string name="delete_all_go">Delete anyway</string>
+    <string name="delete_all_confirm">Delete every activity and record?</string>
+    <string name="delete_all_done">Deleted everything.</string>
+    <string name="licenses_title">Open source licenses</string>
+    <string name="licenses_app">This app is open source under the MIT license.</string>
+    <string name="feedback_subject">Problem report</string>
 </resources>
