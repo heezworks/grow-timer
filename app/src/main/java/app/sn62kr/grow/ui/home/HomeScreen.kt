@@ -130,7 +130,7 @@ private fun HomeScreen(vm: HomeViewModel, pad: PaddingValues, onActivities: () -
                 garden?.let { gs ->
                     val plantName = stringResource(gs.current.species.label())
                     SceneView(gs, seed, vm.poseFor(chosen), stringResource(R.string.scene_desc, plantName, gs.stillLife),
-                        Modifier.fillMaxWidth().clickable(onClick = onPlant))
+                        Modifier.fillMaxWidth().clickable(onClick = onPlant), cropTop = 34f) // 하늘을 잘라 낮게(파라솔 꼭대기까지는 남긴다)
                 }
                 IconButton(onClick = onActivities, modifier = Modifier.align(Alignment.TopEnd).padding(4.dp)) {
                     Icon(Icons.Default.Settings, stringResource(R.string.home_activities), tint = Color(0xFF1C2C44))
@@ -147,12 +147,6 @@ private fun HomeScreen(vm: HomeViewModel, pad: PaddingValues, onActivities: () -
             if (yearSec > 0) Text(stringResource(R.string.home_year_total, Text.duration(ctx, yearSec)),
                 style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 20.dp))
-        }
-        grid?.let { g ->
-            item {
-                // 빈 격자도 그대로 보여 준다 — 채워질 자리가 보이게(spec 2-1)
-                YearGridView(g, onDay = { vm.selectedDay.value = it }, modifier = Modifier.padding(start = 12.dp, top = 12.dp, bottom = 12.dp), cell = 12.dp)
-            }
         }
         item {
             if (active.isEmpty()) {
@@ -179,6 +173,12 @@ private fun HomeScreen(vm: HomeViewModel, pad: PaddingValues, onActivities: () -
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp).height(56.dp),
                 ) { Text(stringResource(R.string.home_start), style = MaterialTheme.typography.titleMedium) }
                 TextButton(onClick = { adding = true }, modifier = Modifier.padding(horizontal = 8.dp)) { Text(stringResource(R.string.home_add_manual)) }
+            }
+        }
+        grid?.let { g ->
+            item {
+                // 시작 버튼 아래(첫 화면에 시작이 보이게). 빈 격자도 그대로 보여 준다 — 채워질 자리가 보이게(spec 2-1)
+                YearGridView(g, onDay = { vm.selectedDay.value = it }, modifier = Modifier.padding(start = 12.dp, top = 12.dp, bottom = 12.dp), cell = 12.dp)
             }
         }
         if (sessions.isNotEmpty()) {

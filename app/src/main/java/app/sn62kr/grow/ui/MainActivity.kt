@@ -22,6 +22,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import app.sn62kr.grow.R
 import app.sn62kr.grow.ui.records.YearScreen
 import app.sn62kr.grow.ui.plant.PlantScreen
+import app.sn62kr.grow.ui.album.AlbumScreen
+import app.sn62kr.grow.ui.album.AlbumViewModel
 import app.sn62kr.grow.ui.plant.PlantViewModel
 import app.sn62kr.grow.ui.records.YearViewModel
 import androidx.compose.material3.MaterialTheme
@@ -72,6 +74,7 @@ private object Routes {
     const val YEAR = "year"
     const val ACTIVITIES = "activities"
     const val PLANT = "plant"
+    const val ALBUM = "album"
 }
 
 /** 아래 탭: 홈 · 한 해. 친구 탭은 M4b에서(design.md 3절). */
@@ -113,7 +116,10 @@ private fun AppNav(g: Graph) {
             YearScreen(viewModel { YearViewModel(g) }, Modifier.statusBarsPadding())
         }
         composable(Routes.PLANT) {
-            PlantScreen(viewModel { PlantViewModel(g) }, onBack = { nav.popBackStack() })
+            PlantScreen(viewModel { PlantViewModel(g) }, onBack = { nav.popBackStack() }, onAlbum = { nav.navigate(Routes.ALBUM) })
+        }
+        composable(Routes.ALBUM) {
+            AlbumScreen(viewModel { AlbumViewModel(g) }, onBack = { nav.popBackStack() })
         }
         composable(Routes.ACTIVITIES) {
             ActivitiesScreen(viewModel { ActivitiesViewModel(g) }, onBack = { nav.popBackStack() })

@@ -26,6 +26,8 @@ class Records(private val db: GrowDb, private val clock: () -> Long = System::cu
     fun daily(activityId: String? = null): Flow<Map<LocalDate, Int>> =
         sessions.observeDailySums(activityId).map { l -> l.associate { Days.parse(it.localDate) to it.sec } }
 
+    val allChrono: Flow<List<Session>> = sessions.observeAllChrono().map { l -> l.map { it.toModel() } }
+
     /** 모든 기록의 합(초). 식물과 정물이 이것에서 계산된다. */
     val totalSec: Flow<Long> = sessions.observeTotal()
 

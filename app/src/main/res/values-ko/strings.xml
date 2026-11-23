@@ -130,4 +130,9 @@
     <string name="grew_full">화분이 다 자랐어요. 새 화분을 놓았어요.</string>
     <string name="grew_still">테라스에 새 물건이 놓였어요.</string>
     <string name="back_home">뒤로</string>
+
+    <string name="album_title">사진첩</string>
+    <string name="album_open">사진첩</string>
+    <string name="album_empty">5분 넘게 보낸 시간마다 사진이 한 장씩 생겨요.</string>
+    <string name="polaroid_caption">%1$s · %2$s</string>
 </resources>

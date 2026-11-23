@@ -19,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -58,11 +59,12 @@ class PlantViewModel(g: Graph) : ViewModel() {
 /** 식물 화면(plan M3): 지금 화분 + 다음 모습까지 남은 시간 + 다 자란 화분들. 죽지 않고, 쉬면 그대로 기다린다(D23). */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlantScreen(vm: PlantViewModel, onBack: () -> Unit) {
+fun PlantScreen(vm: PlantViewModel, onBack: () -> Unit, onAlbum: () -> Unit = {}) {
     val ctx = LocalContext.current
     val gs by vm.garden.collectAsStateWithLifecycle()
     Scaffold(topBar = {
-        TopAppBar(title = {}, navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back)) } })
+        TopAppBar(title = {}, navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back)) } },
+            actions = { TextButton(onClick = onAlbum) { Text(stringResource(R.string.album_open)) } })
     }) { pad ->
         val g = gs ?: return@Scaffold
         val p = g.current

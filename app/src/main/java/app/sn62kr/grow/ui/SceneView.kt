@@ -11,6 +11,8 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import app.sn62kr.grow.core.draw.DrawBuilder
+import app.sn62kr.grow.core.draw.Drawing
+import androidx.compose.ui.draw.clipToBounds
 import app.sn62kr.grow.core.draw.Palette
 import app.sn62kr.grow.core.draw.PlantArt
 import app.sn62kr.grow.core.draw.Pose
@@ -28,13 +30,25 @@ fun sceneInput(gs: GardenState, seed: Long, pose: Pose, dusk: Boolean, square: B
     square, dusk,
 )
 
-/** 테라스 장면(D57). 그림은 저장하지 않고 입력으로 매번 그린다(D43). */
+/**
+ * 테라스 장면(D57). 그림은 저장하지 않고 입력으로 매번 그린다(D43).
+ * [cropTop]: 위(하늘)를 이만큼(장면 단위) 잘라 낮게 보인다 — 홈은 시작 버튼이 첫 화면에 보이게 자른다.
+ */
 @Composable
-fun SceneView(gs: GardenState, seed: Long, pose: Pose, description: String, modifier: Modifier = Modifier, square: Boolean = false) {
+fun SceneView(gs: GardenState, seed: Long, pose: Pose, description: String, modifier: Modifier = Modifier, square: Boolean = false, cropTop: Float = 0f) {
     val dusk = isSystemInDarkTheme()
-    val drawing = remember(gs, seed, pose, dusk, square) { SceneArt.build(sceneInput(gs, seed, pose, dusk, square)) }
-    Canvas(modifier.aspectRatio(SceneArt.W / SceneArt.height(square)).semantics { contentDescription = description }) {
-        drawIntoCanvas { AndroidRenderer.draw(it.nativeCanvas, drawing, size.width) }
+    SceneCanvas(remember(gs, seed, pose, dusk, square) { SceneArt.build(sceneInput(gs, seed, pose, dusk, square)) }, description, modifier, cropTop)
+}
+
+@Composable
+fun SceneCanvas(drawing: Drawing, description: String, modifier: Modifier = Modifier, cropTop: Float = 0f) {
+    Canvas(modifier.aspectRatio(drawing.width / (drawing.height - cropTop)).clipToBounds().semantics { contentDescription = description }) {
+        drawIntoCanvas {
+            val k = size.width / drawing.width
+            it.nativeCanvas.save(); it.nativeCanvas.translate(0f, -cropTop * k)
+            AndroidRenderer.draw(it.nativeCanvas, drawing, size.width)
+            it.nativeCanvas.restore()
+        }
     }
 }
 

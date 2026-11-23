@@ -143,4 +143,9 @@
     <string name="grew_full">Your plant is fully grown. A new pot is waiting.</string>
     <string name="grew_still">Something new is on the terrace.</string>
     <string name="back_home">Back</string>
+
+    <string name="album_title">Photos</string>
+    <string name="album_open">Photos</string>
+    <string name="album_empty">Every session over 5 minutes leaves a photo.</string>
+    <string name="polaroid_caption">%1$s · %2$s</string>
 </resources>

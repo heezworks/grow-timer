@@ -88,6 +88,10 @@ interface SessionDao {
     @Query("SELECT localDate, SUM(durationSec) AS sec FROM session WHERE (:activityId IS NULL OR activityId = :activityId) GROUP BY localDate")
     fun observeDailySums(activityId: String?): Flow<List<DaySum>>
 
+    /** 모든 세션, 시간 순. 폴라로이드가 그때까지 쌓인 시간을 센다. */
+    @Query("SELECT * FROM session ORDER BY startUtc, createdAt")
+    fun observeAllChrono(): Flow<List<SessionEntity>>
+
     @Query("SELECT COALESCE(SUM(durationSec), 0) FROM session")
     fun observeTotal(): Flow<Long>
 
