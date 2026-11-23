@@ -69,6 +69,7 @@ fun YearScreen(vm: YearViewModel, modifier: Modifier = Modifier) {
                 }
             }
         }
+        item { WidgetTip(vm) }
         if (years == null) item {
             Text(stringResource(R.string.year_empty), color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp))
@@ -131,6 +132,27 @@ private fun TotalsRow(t: Totals) {
                         Text(Text.duration(ctx, sec), style = MaterialTheme.typography.titleLarge)
                     }
                 }
+            }
+        }
+    }
+}
+
+/** "홈 화면에 올해를 놓아 둘 수 있어요" — 런처가 위젯 고정을 지원하고, 놓인 위젯이 없고, 닫지 않았을 때만(plan M4 "위젯 추가 안내"). */
+@Composable
+private fun WidgetTip(vm: YearViewModel) {
+    val ctx = LocalContext.current
+    val closed by vm.widgetTipClosed.collectAsStateWithLifecycle()
+    val am = android.appwidget.AppWidgetManager.getInstance(ctx)
+    val provider = android.content.ComponentName(ctx, app.sn62kr.grow.widget.YearWidgetReceiver::class.java)
+    val placed = am.getAppWidgetIds(provider).isNotEmpty() ||
+        am.getAppWidgetIds(android.content.ComponentName(ctx, app.sn62kr.grow.widget.RecentWidgetReceiver::class.java)).isNotEmpty()
+    if (closed || placed || !am.isRequestPinAppWidgetSupported) return
+    androidx.compose.material3.OutlinedCard(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
+        Column(Modifier.padding(16.dp)) {
+            Text(stringResource(R.string.widget_tip), style = MaterialTheme.typography.bodyLarge)
+            Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.End) {
+                androidx.compose.material3.TextButton(onClick = { vm.closeWidgetTip() }) { Text(stringResource(R.string.widget_tip_close)) }
+                androidx.compose.material3.TextButton(onClick = { am.requestPinAppWidget(provider, null, null) }) { Text(stringResource(R.string.widget_tip_add)) }
             }
         }
     }

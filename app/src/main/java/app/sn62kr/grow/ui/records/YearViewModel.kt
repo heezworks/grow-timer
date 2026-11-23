@@ -49,6 +49,9 @@ class YearViewModel(private val g: Graph) : ViewModel() {
     val daySessions: StateFlow<List<Session>> = selectedDay.flatMapLatest { d -> if (d == null) flowOf(emptyList()) else g.records.day(d) }
         .stateIn(viewModelScope, stay, emptyList())
 
+    val widgetTipClosed: StateFlow<Boolean> = g.settings.widgetTipClosed.stateIn(viewModelScope, SharingStarted.Eagerly, true)
+    fun closeWidgetTip() = viewModelScope.launch { g.settings.closeWidgetTip() }
+
     fun shiftYear(by: Int) { year.value += by }
     fun select(d: LocalDate?) { selectedDay.value = d }
     fun save(s: Session) = viewModelScope.launch { g.records.updateSession(s) }

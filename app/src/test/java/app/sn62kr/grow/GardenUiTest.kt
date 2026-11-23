@@ -66,6 +66,16 @@ class GardenUiTest {
         compose.onRoot().captureRoboImage("screenshots/20-album.png")
     }
 
+    @Test fun shareCard() {
+        seed()
+        val vm = AlbumViewModel(g)
+        compose.setContent { AppFrame { AlbumScreen(vm, onBack = {}) } }
+        waitFor { vm.items.value?.size == 4 }
+        val bmp = vm.card(app, vm.items.value!!.first())
+        assertEquals(1080 to 1350, bmp.width to bmp.height)
+        bmp.captureRoboImage("screenshots/22-share-card.png")
+    }
+
     @Test fun plantScreen() {
         seed()
         val vm = PlantViewModel(g)

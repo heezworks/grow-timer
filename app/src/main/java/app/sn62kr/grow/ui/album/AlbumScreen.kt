@@ -2,7 +2,15 @@ package app.sn62kr.grow.ui.album
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.Button
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.ui.Alignment
+import android.widget.Toast
+import app.sn62kr.grow.core.stats.YearGrid
+import app.sn62kr.grow.share.ShareCard
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -71,8 +79,13 @@ fun polaroids(chrono: List<Session>, activities: List<Activity>): List<Polaroid>
     return out.asReversed() // 새것부터
 }
 
-class AlbumViewModel(g: Graph) : ViewModel() {
+class AlbumViewModel(private val g: Graph) : ViewModel() {
     val seed: StateFlow<Long> = g.settings.gardenSeed.stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
+    private val daily = g.records.daily().stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
+
+    /** 공유 카드: 그 사진의 해 격자를 같이 넣는다. */
+    fun card(ctx: android.content.Context, p: Polaroid) = ShareCard.render(ctx, p, seed.value,
+        YearGrid.build(java.time.LocalDate.parse(p.session.localDate).year, g.weekStart(), daily.value, g.clock.today()))
     val items: StateFlow<List<Polaroid>?> = combine(g.records.allChrono, g.records.allActivities, ::polaroids)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 }
@@ -97,7 +110,20 @@ fun AlbumScreen(vm: AlbumViewModel, onBack: () -> Unit) {
             items(list, key = { it.session.id }) { p -> PolaroidCard(p, seed, Modifier.padding(8.dp).clickable { open = p }) }
         }
     }
-    open?.let { p -> Dialog(onDismissRequest = { open = null }) { PolaroidCard(p, seed, Modifier.fillMaxWidth().clickable { open = null }) } }
+    val ctx = LocalContext.current
+    open?.let { p ->
+        Dialog(onDismissRequest = { open = null }) {
+            Column {
+                PolaroidCard(p, seed, Modifier.fillMaxWidth().clickable { open = null })
+                Row(Modifier.fillMaxWidth().padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.End)) {
+                    if (ShareCard.canSave()) FilledTonalButton(onClick = {
+                        if (ShareCard.save(ctx, vm.card(ctx, p))) Toast.makeText(ctx, R.string.saved_image, Toast.LENGTH_SHORT).show()
+                    }) { Text(stringResource(R.string.save_image)) }
+                    Button(onClick = { ShareCard.share(ctx, vm.card(ctx, p)) }) { Text(stringResource(R.string.share)) }
+                }
+            }
+        }
+    }
 }
 
 /** 흰 테두리 + 아래 넓은 여백에 날짜·활동·길이. 자세·화분·정물은 그 세션이 끝난 때의 모습. */

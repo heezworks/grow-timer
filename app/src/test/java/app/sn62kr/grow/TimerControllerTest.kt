@@ -25,6 +25,11 @@ class TimerControllerTest {
     private val t = g.timer
     private val min = 60_000L
 
+    /** 정한 시간 알람만(앱이 켜질 때 거는 자정 위젯 알람은 뺀다). */
+    private fun targetAlarm() = shadowOf(ctx.getSystemService(AlarmManager::class.java)).scheduledAlarms.firstOrNull { a ->
+        shadowOf(a.operation).savedIntent.component?.className == app.sn62kr.grow.timer.TargetAlarmReceiver::class.java.name
+    }
+
     @Test fun onlyOneTimer() = runBlocking { // S3 ⑨
         val a = g.records.addActivity("기타", 0, "x")
         assertEquals(TimerController.StartResult.Started, t.start(a.id, a.name, null))
@@ -65,15 +70,14 @@ class TimerControllerTest {
         val run = t.running.first()!!
         assertEquals(clock.boot, run.boot)
         assertEquals(7 * min, t.read(run).activeMs)
-        assertNotNull(shadowOf(ctx.getSystemService(AlarmManager::class.java)).peekNextScheduledAlarm())
+        assertNotNull(targetAlarm())
     }
 
     @Test fun targetAlarmCancelledOnFinish() = runBlocking {
         val a = g.records.addActivity("기타", 0, "x")
         t.start(a.id, a.name, 1500)
-        val am = shadowOf(ctx.getSystemService(AlarmManager::class.java))
-        assertNotNull(am.peekNextScheduledAlarm())
+        assertNotNull(targetAlarm())
         t.finish(60)
-        assertNull(am.peekNextScheduledAlarm())
+        assertNull(targetAlarm())
     }
 }

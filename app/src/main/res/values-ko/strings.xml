@@ -135,4 +135,17 @@
     <string name="album_open">사진첩</string>
     <string name="album_empty">5분 넘게 보낸 시간마다 사진이 한 장씩 생겨요.</string>
     <string name="polaroid_caption">%1$s · %2$s</string>
+
+    <string name="widget_year_label">올해</string>
+    <string name="widget_recent_label">최근 몇 주</string>
+    <string name="widget_this_year">올해</string>
+    <string name="widget_desc">올해 %1$s, 오늘 %2$s. 누르면 앱이 열려요.</string>
+    <string name="widget_tip">홈 화면에 올해를 놓아 둘 수 있어요.</string>
+    <string name="widget_tip_add">위젯 놓기</string>
+    <string name="widget_tip_close">나중에</string>
+
+    <string name="share">공유</string>
+    <string name="save_image">저장</string>
+    <string name="saved_image">사진 폴더에 저장했어요.</string>
+    <string name="card_year">%3$d년 · %1$d일 · %2$s</string>
 </resources>

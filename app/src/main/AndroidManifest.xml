@@ -31,6 +31,25 @@
         </activity>
 
         <receiver android:name=".timer.TargetAlarmReceiver" android:exported="false" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.files"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- 홈 화면 위젯(무료, D14) -->
+        <receiver android:name=".widget.YearWidgetReceiver" android:exported="true" android:label="@string/widget_year_label">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_year" />
+        </receiver>
+        <receiver android:name=".widget.RecentWidgetReceiver" android:exported="true" android:label="@string/widget_recent_label">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_recent" />
+        </receiver>
+        <receiver android:name=".widget.MidnightReceiver" android:exported="false" />
         <receiver android:name=".timer.SystemEventsReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

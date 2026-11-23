@@ -83,6 +83,32 @@ class GalleryTest {
         save(sheet(listOf("저녁(다크 모드)" to scene(Pose.GUITAR, 40 * 3600L, dusk = true), "폴라로이드(정사각)" to scene(Pose.KNIT, 40 * 3600L, square = true)), 2), "50-dusk-polaroid.png")
     }
 
+    /** 위젯 미리 보기(추가 창에 보이는 그림). `-Ppreview=app/src/main/res/drawable-nodpi`일 때만 쓴다. 글자 없이 격자만(언어와 무관하게). */
+    @Test fun widgetPreviews() {
+        val dir = System.getProperty("preview.out")?.takeIf { it.isNotBlank() }?.let { File(it).apply { mkdirs() } } ?: return
+        fun card(wCells: Int, weeks: Int, w: Int, h: Int, name: String) {
+            val img = BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB)
+            val g = img.createGraphics()
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+            g.color = Color(0xFBF7EF); g.fillRoundRect(0, 0, w, h, 48, 48)
+            val r = Rng(7)
+            val padX = if (wCells == 1) 170 else 30; val top = if (wCells == 1) 20 else 70
+            val step = minOf((w - padX - 30) / weeks.toFloat(), (h - top - 20) / 7f)
+            val ramp = intArrayOf(0xE6E2D4, 0xCFDAAE, 0xA6BD72, 0x7A9644, 0x566F2A)
+            for (c in 0 until weeks) for (d in 0..6) {
+                val lv = if (c == weeks - 1 && d > 3) -1 else (r.f() * 5).toInt().coerceAtMost(4).let { if (r.f() < 0.35f) 0 else it }
+                if (lv < 0) continue
+                g.color = Color(ramp[lv])
+                g.fillRoundRect((padX + c * step).toInt(), (top + d * step).toInt(), (step * 0.78f).toInt(), (step * 0.78f).toInt(), 6, 6)
+            }
+            g.color = Color(0x2E3A2F)
+            if (wCells == 1) { g.fillRoundRect(30, h / 2 - 14, 110, 28, 10, 10) } else { g.fillRoundRect(30, 22, 200, 30, 10, 10) }
+            g.dispose(); ImageIO.write(img, "png", File(dir, name))
+        }
+        card(2, 53, 1000, 440, "widget_preview_year.png")
+        card(1, 20, 1000, 170, "widget_preview_recent.png")
+    }
+
     @Test fun deterministic() {
         val gs = Garden.of(123 * 3600L, gardenSeed)
         val inp = SceneInput(gardenSeed, Pose.SKETCH, gs.stillLife, (listOf(gs.current) + gs.grown).map { PlantSpot(it.species, it.seed, it.growth) })

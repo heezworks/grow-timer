@@ -53,6 +53,9 @@ class SettingsStore(private val ds: DataStore<Preferences>) {
     private val askedNotify = booleanPreferencesKey("askedNotify")
 
     private val gardenSeedKey = longPreferencesKey("gardenSeed")
+    private val widgetTipKey = booleanPreferencesKey("widgetTipClosed")
+    val widgetTipClosed: Flow<Boolean> = ds.data.map { it[widgetTipKey] ?: false }
+    suspend fun closeWidgetTip() = ds.edit { it[widgetTipKey] = true }
 
     val isOnboarded: Flow<Boolean> = ds.data.map { it[onboarded] ?: false }
 

@@ -24,6 +24,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.drop
+import app.sn62kr.grow.widget.WidgetUpdates
 import kotlinx.coroutines.flow.flow
 import java.time.LocalDate
 import java.time.DayOfWeek
@@ -66,5 +69,11 @@ class GrowApp : Application() {
         super.onCreate()
         @OptIn(kotlinx.coroutines.DelicateCoroutinesApi::class)
         kotlinx.coroutines.GlobalScope.launch { graph.settings.ensureGardenSeed() } // 정원 씨앗은 처음 한 번
+        // 기록이 바뀌면 위젯을 다시 그린다(앱 프로세스가 있을 때만 기록이 바뀐다). 자정 갱신도 건다.
+        @OptIn(kotlinx.coroutines.DelicateCoroutinesApi::class)
+        kotlinx.coroutines.GlobalScope.launch {
+            graph.records.allChrono.drop(1).collectLatest { delay(500); WidgetUpdates.all(this@GrowApp) }
+        }
+        WidgetUpdates.scheduleMidnight(this)
     }
 }

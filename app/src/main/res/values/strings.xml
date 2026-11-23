@@ -148,4 +148,19 @@
     <string name="album_open">Photos</string>
     <string name="album_empty">Every session over 5 minutes leaves a photo.</string>
     <string name="polaroid_caption">%1$s · %2$s</string>
+
+    <!-- 위젯(M4) -->
+    <string name="widget_year_label">This year</string>
+    <string name="widget_recent_label">Recent weeks</string>
+    <string name="widget_this_year">this year</string>
+    <string name="widget_desc">%1$s this year, %2$s today. Opens the app.</string>
+    <string name="widget_tip">Keep this year on your home screen.</string>
+    <string name="widget_tip_add">Add widget</string>
+    <string name="widget_tip_close">Not now</string>
+
+    <!-- 공유 카드(M4, D57: 공유는 폴라로이드) -->
+    <string name="share">Share</string>
+    <string name="save_image">Save</string>
+    <string name="saved_image">Saved to Pictures.</string>
+    <string name="card_year">%3$d · %1$d days · %2$s</string>
 </resources>

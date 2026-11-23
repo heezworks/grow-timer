@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 4×2 올해 격자(S1에서 커버·안쪽 화면 확인). 미리 보기가 없으면 추가 창에 "추가할 수 없음"으로 보였다(S1 배운 것 6) -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="250dp" android:minHeight="110dp"
+    android:targetCellWidth="4" android:targetCellHeight="2"
+    android:minResizeWidth="180dp" android:minResizeHeight="90dp"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen"
+    android:description="@string/widget_year_label"
+    android:previewImage="@drawable/widget_preview_year"
+    android:previewLayout="@layout/widget_preview_year"
+    android:initialLayout="@layout/glance_default_loading_layout"
+    android:updatePeriodMillis="0" />
