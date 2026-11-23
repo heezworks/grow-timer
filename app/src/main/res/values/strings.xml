@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 문구 원본은 docs/spec-draft.md 2절(D56: "기록·집중·달성·생산성·목표"를 쓰지 않는다). 영어는 단계 4에서 다시 본다 -->
+<resources>
+    <string name="app_name" translatable="false">grow-timer</string>
+
+    <!-- 첫 실행 -->
+    <string name="onboard_intro">Time for what you love is a little vacation.</string>
+    <string name="onboard_question">What do you like to spend time on?</string>
+    <string name="onboard_later">You can change this later.</string>
+    <string name="onboard_custom">Make your own</string>
+    <string name="onboard_custom_hint">Name</string>
+    <string name="onboard_start">Start</string>
+    <string name="onboard_skip">Skip</string>
+    <string name="default_activity">My time</string>
+
+    <string name="preset_reading">Reading</string>
+    <string name="preset_instrument">Instrument</string>
+    <string name="preset_drawing">Drawing</string>
+    <string name="preset_knitting">Knitting</string>
+    <string name="preset_writing">Writing</string>
+    <string name="preset_language">Languages</string>
+    <string name="preset_study">Studying</string>
+    <string name="preset_exercise">Exercise</string>
+    <string name="preset_cooking">Cooking</string>
+    <string name="preset_photo">Photography</string>
+    <string name="preset_gardening">Gardening</string>
+    <string name="preset_coding">Coding</string>
+
+    <!-- 홈 -->
+    <string name="home_today">Today</string>
+    <string name="home_today_total">%1$s today</string>
+    <string name="home_empty">Track your first session to sprout your seed.</string>
+    <string name="home_start">Start</string>
+    <string name="home_target_none">No time limit</string>
+    <string name="home_target_min">%1$d min</string>
+    <string name="home_add_manual">Add time yourself</string>
+    <string name="home_activities">Activities</string>
+    <string name="home_manual_tag">added</string>
+    <string name="home_no_activity">Add an activity to start.</string>
+
+    <!-- 타이머 -->
+    <string name="timer_pause">Pause</string>
+    <string name="timer_resume">Resume</string>
+    <string name="timer_finish">Finish</string>
+    <string name="timer_paused">Paused</string>
+    <string name="timer_left">left</string>
+    <string name="timer_over">Time\'s up — take your time.</string>
+    <string name="timer_notify_hint">Turn on notifications to get an alert when time\'s up.</string>
+    <string name="timer_done">%2$s with %1$s.</string>
+    <string name="timer_short_ask">Less than a minute. Save anyway?</string>
+    <string name="timer_short_save">Save</string>
+    <string name="timer_short_discard">Don\'t save</string>
+    <string name="timer_over_max">The timer ran for over 8 hours. How long did you actually spend?</string>
+    <string name="timer_stale_pause">This timer has been paused for a long time. Finish it?</string>
+    <string name="timer_stale_keep">Keep paused</string>
+
+    <!-- 시간 직접 더하기 -->
+    <string name="manual_title">Add time</string>
+    <string name="manual_hint">You can add time from earlier days.</string>
+    <string name="manual_today">Today</string>
+    <string name="manual_yesterday">Yesterday</string>
+    <string name="manual_pick_date">Pick a date</string>
+    <string name="manual_hours">Hours</string>
+    <string name="manual_minutes">Minutes</string>
+    <string name="manual_added">Added %2$s of %1$s to %3$s.</string>
+    <string name="day_over">A day only has 24 hours. Please check the time.</string>
+
+    <!-- 기록 고치기 -->
+    <string name="edit_title">Edit time</string>
+    <string name="edit_delete">Delete</string>
+    <string name="edit_deleted">Deleted.</string>
+    <string name="undo">Undo</string>
+
+    <!-- 활동 관리 -->
+    <string name="act_title">Activities</string>
+    <string name="act_add">Add activity</string>
+    <string name="act_new">New activity</string>
+    <string name="act_name">Name</string>
+    <string name="act_color">Color</string>
+    <string name="act_hide">Hide</string>
+    <string name="act_hidden">Hidden</string>
+    <string name="act_show">Show again</string>
+    <string name="act_delete">Delete</string>
+    <string name="act_delete_ask">Also delete %1$s of records for this activity?</string>
+    <string name="act_delete_keep">Keep records</string>
+    <string name="act_delete_all">Delete them too</string>
+    <string name="act_up">Move up</string>
+    <string name="act_down">Move down</string>
+
+    <!-- 공통 -->
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="back">Back</string>
+    <string name="dur_h_m">%1$d h %2$d min</string>
+    <string name="dur_h">%1$d h</string>
+    <string name="dur_m">%1$d min</string>
+    <string name="dur_under_min">less than a minute</string>
+    <string name="today_lower">today</string>
+    <string name="yesterday_lower">yesterday</string>
+
+    <!-- 알림 -->
+    <string name="channel_running">While the timer runs</string>
+    <string name="channel_done">When time\'s up</string>
+    <string name="notif_running">Time with %1$s</string>
+    <string name="notif_paused">Paused</string>
+    <string name="notif_target_title">Time\'s up</string>
+    <string name="notif_target_text">No rush — finish when you\'re ready.</string>
+</resources>

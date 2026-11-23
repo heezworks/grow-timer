@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- 잎 둘 -->
+    <path android:fillColor="#6B7F3A" android:pathData="M54,56 C44,56 36,48 36,38 C46,38 54,46 54,56 Z" />
+    <path android:fillColor="#879B4A" android:pathData="M54,52 C54,40 62,32 74,32 C74,44 66,52 54,52 Z" />
+    <!-- 줄기 -->
+    <path android:fillColor="#5A6B30" android:pathData="M52.5,46 L55.5,46 L55.5,64 L52.5,64 Z" />
+    <!-- 화분 -->
+    <path android:fillColor="#C8643B" android:pathData="M38,62 L70,62 L70,68 L38,68 Z" />
+    <path android:fillColor="#B5552F" android:pathData="M41,68 L67,68 L63,82 L45,82 Z" />
+</vector>
