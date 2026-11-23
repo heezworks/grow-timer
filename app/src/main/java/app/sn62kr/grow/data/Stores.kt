@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import app.sn62kr.grow.core.time.RunningTimer
@@ -51,7 +52,21 @@ class SettingsStore(private val ds: DataStore<Preferences>) {
     private val onboarded = booleanPreferencesKey("onboarded")
     private val askedNotify = booleanPreferencesKey("askedNotify")
 
+    private val gardenSeedKey = longPreferencesKey("gardenSeed")
+
     val isOnboarded: Flow<Boolean> = ds.data.map { it[onboarded] ?: false }
+
+    /**
+     * 정원 씨앗: 식물 종 순서·모양과 정물 순서를 정한다. 처음 읽을 때 한 번 만든다. 자동 백업에 들어가고(settings 파일),
+     * JSON 백업에도 넣는다(M5) — 폰을 바꿔도 같은 정원.
+     */
+    val gardenSeed: Flow<Long> = ds.data.map { it[gardenSeedKey] ?: 0L }
+
+    suspend fun ensureGardenSeed(): Long {
+        var out = 0L
+        ds.edit { p -> out = p[gardenSeedKey] ?: java.security.SecureRandom().nextLong().also { p[gardenSeedKey] = it } }
+        return out
+    }
     val hasAskedNotify: Flow<Boolean> = ds.data.map { it[askedNotify] ?: false }
 
     suspend fun setOnboarded() = ds.edit { it[onboarded] = true }

@@ -54,6 +54,10 @@ import app.sn62kr.grow.core.model.Session
 import app.sn62kr.grow.core.model.Source
 import app.sn62kr.grow.ui.ColorDot
 import app.sn62kr.grow.ui.SessionRow
+import app.sn62kr.grow.ui.SceneView
+import app.sn62kr.grow.ui.plant.label
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import app.sn62kr.grow.ui.DaySheet
 import app.sn62kr.grow.ui.YearGridView
 import app.sn62kr.grow.ui.Text
@@ -64,14 +68,19 @@ import java.time.format.FormatStyle
 
 /** 홈. 타이머가 돌고 있으면 타이머 화면이 먼저 나온다(design.md 3절). */
 @Composable
-fun HomeRoute(vm: HomeViewModel, onActivities: () -> Unit) {
+fun HomeRoute(vm: HomeViewModel, onActivities: () -> Unit, onPlant: () -> Unit = {}) {
     val ctx = LocalContext.current
     val snack = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     LaunchedEffect(vm) {
         vm.events.collect { e ->
             when (e) {
-                is HomeEvent.Finished -> snack.showSnackbar(ctx.getString(R.string.timer_done, Text.with(ctx, e.activityName), Text.duration(ctx, e.sec.toLong())))
+                is HomeEvent.Finished -> snack.showSnackbar(
+                    ctx.getString(R.string.timer_done, Text.with(ctx, e.activityName), Text.duration(ctx, e.sec.toLong())) + " " +
+                        ctx.getString(when (e.growth) {
+                            Growth.LEAF -> R.string.grew_leaf; Growth.STAGE -> R.string.grew_stage
+                            Growth.FULL -> R.string.grew_full; Growth.STILL_LIFE -> R.string.grew_still
+                        }))
                 is HomeEvent.Added -> snack.showSnackbar(ctx.getString(R.string.manual_added, e.activityName, Text.duration(ctx, e.sec.toLong()),
                     Text.dayName(ctx, e.date, vm.today.value)))
                 is HomeEvent.Deleted -> scope.launch {
@@ -85,14 +94,14 @@ fun HomeRoute(vm: HomeViewModel, onActivities: () -> Unit) {
     Scaffold(snackbarHost = { SnackbarHost(snack) }) { pad ->
         when (val r = running) {
             is Loaded.Loading -> Box(Modifier.fillMaxSize())
-            is Loaded.Value -> r.v?.let { TimerScreen(vm, it, pad) } ?: HomeScreen(vm, pad, onActivities)
+            is Loaded.Value -> r.v?.let { TimerScreen(vm, it, pad) } ?: HomeScreen(vm, pad, onActivities, onPlant)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-private fun HomeScreen(vm: HomeViewModel, pad: PaddingValues, onActivities: () -> Unit) {
+private fun HomeScreen(vm: HomeViewModel, pad: PaddingValues, onActivities: () -> Unit, onPlant: () -> Unit) {
     val ctx = LocalContext.current
     val all by vm.activities.collectAsStateWithLifecycle()
     val active = all.filter { !it.archived }
@@ -103,6 +112,8 @@ private fun HomeScreen(vm: HomeViewModel, pad: PaddingValues, onActivities: () -
     val grid by vm.grid.collectAsStateWithLifecycle()
     val yearSec by vm.yearSec.collectAsStateWithLifecycle()
     val day by vm.selectedDay.collectAsStateWithLifecycle()
+    val garden by vm.garden.collectAsStateWithLifecycle()
+    val seed by vm.gardenSeed.collectAsStateWithLifecycle()
     val daySessions by vm.daySessions.collectAsStateWithLifecycle()
     val chosen = selected?.takeIf { id -> active.any { it.id == id } } ?: active.firstOrNull()?.id
     var adding by rememberSaveable { mutableStateOf(false) }
@@ -112,15 +123,19 @@ private fun HomeScreen(vm: HomeViewModel, pad: PaddingValues, onActivities: () -
     val ask = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { vm.start() }
     val askedBefore by vm.askedNotify.collectAsStateWithLifecycle()
 
-    LazyColumn(Modifier.fillMaxSize().padding(top = pad.calculateTopPadding()), contentPadding = PaddingValues(bottom = 32.dp)) {
+    LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = 32.dp)) {
         item {
-            CenterAlignedTopAppBar(
-                title = {},
-                windowInsets = WindowInsets(0),
-                actions = {
-                    IconButton(onClick = onActivities) { Icon(Icons.Default.Settings, stringResource(R.string.home_activities)) }
-                },
-            )
+            // 장면이 홈의 맨 위(spec 2-1: 지금 키우는 식물). 누르면 식물 화면. 설정은 장면 위 오른쪽.
+            Box {
+                garden?.let { gs ->
+                    val plantName = stringResource(gs.current.species.label())
+                    SceneView(gs, seed, vm.poseFor(chosen), stringResource(R.string.scene_desc, plantName, gs.stillLife),
+                        Modifier.fillMaxWidth().clickable(onClick = onPlant))
+                }
+                IconButton(onClick = onActivities, modifier = Modifier.align(Alignment.TopEnd).padding(4.dp)) {
+                    Icon(Icons.Default.Settings, stringResource(R.string.home_activities), tint = Color(0xFF1C2C44))
+                }
+            }
         }
         item {
             val total = sessions.sumOf { it.durationSec.toLong() }

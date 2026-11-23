@@ -21,6 +21,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import app.sn62kr.grow.R
 import app.sn62kr.grow.ui.records.YearScreen
+import app.sn62kr.grow.ui.plant.PlantScreen
+import app.sn62kr.grow.ui.plant.PlantViewModel
 import app.sn62kr.grow.ui.records.YearViewModel
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -69,6 +71,7 @@ private object Routes {
     const val HOME = "home"
     const val YEAR = "year"
     const val ACTIVITIES = "activities"
+    const val PLANT = "plant"
 }
 
 /** 아래 탭: 홈 · 한 해. 친구 탭은 M4b에서(design.md 3절). */
@@ -104,10 +107,13 @@ private fun AppNav(g: Graph) {
             }
         }
         composable(Routes.HOME) {
-            HomeRoute(viewModel { HomeViewModel(g) }, onActivities = { nav.navigate(Routes.ACTIVITIES) })
+            HomeRoute(viewModel { HomeViewModel(g) }, onActivities = { nav.navigate(Routes.ACTIVITIES) }, onPlant = { nav.navigate(Routes.PLANT) })
         }
         composable(Routes.YEAR) {
             YearScreen(viewModel { YearViewModel(g) }, Modifier.statusBarsPadding())
+        }
+        composable(Routes.PLANT) {
+            PlantScreen(viewModel { PlantViewModel(g) }, onBack = { nav.popBackStack() })
         }
         composable(Routes.ACTIVITIES) {
             ActivitiesScreen(viewModel { ActivitiesViewModel(g) }, onBack = { nav.popBackStack() })

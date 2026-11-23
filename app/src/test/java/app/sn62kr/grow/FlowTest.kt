@@ -99,7 +99,7 @@ class FlowTest {
         compose.onRoot().captureRoboImage("screenshots/04-timer-countdown.png")
         clock.advance(22 * 60_000)
         compose.onNodeWithText("끝내기").performClick()
-        waitText("뜨개질과 " + nb("32분") + "을 보냈어요.")
+        waitText("뜨개질과 " + nb("32분") + "을 보냈어요. 식물이 조금 달라졌어요.") // 20초 + 32분: 첫 식물이 30분 단계를 넘었다
         compose.onRoot().captureRoboImage("screenshots/05-home-today.png")
         compose.onNodeWithText("오늘 " + nb("32분")).assertIsDisplayed()
 

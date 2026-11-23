@@ -88,6 +88,9 @@ interface SessionDao {
     @Query("SELECT localDate, SUM(durationSec) AS sec FROM session WHERE (:activityId IS NULL OR activityId = :activityId) GROUP BY localDate")
     fun observeDailySums(activityId: String?): Flow<List<DaySum>>
 
+    @Query("SELECT COALESCE(SUM(durationSec), 0) FROM session")
+    fun observeTotal(): Flow<Long>
+
     /** 기간 안의 활동별 합. 날짜는 YYYY-MM-DD 글자라 글자 비교가 곧 날짜 비교다. */
     @Query("SELECT activityId, SUM(durationSec) AS sec FROM session WHERE localDate BETWEEN :from AND :to GROUP BY activityId ORDER BY sec DESC")
     fun observeActivitySums(from: String, to: String): Flow<List<ActivitySum>>

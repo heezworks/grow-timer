@@ -113,4 +113,21 @@
     <string name="day_empty">이날은 보낸 시간이 없어요.</string>
     <string name="day_add">이날에 시간 더하기</string>
     <string name="home_year_total">올해 %1$s</string>
+
+    <string name="species_olive">올리브</string>
+    <string name="species_lemon">레몬</string>
+    <string name="species_lavender">라벤더</string>
+    <string name="species_geranium">제라늄</string>
+    <string name="plant_title">%1$d번째 화분 · %2$s</string>
+    <string name="plant_next">다음 모습까지 %1$s</string>
+    <string name="plant_with">이 화분과 보낸 시간 %1$s</string>
+    <string name="plant_grown">다 자란 화분</string>
+    <string name="still_next">테라스에 새 물건이 놓이기까지 %1$s</string>
+    <string name="scene_desc">테라스. 화분에 %1$s, 둘레에 물건 %2$d개.</string>
+    <string name="plant_desc">%1$s, 5단계 가운데 %2$d단계.</string>
+    <string name="grew_leaf">잎이 하나 늘었어요.</string>
+    <string name="grew_stage">식물이 조금 달라졌어요.</string>
+    <string name="grew_full">화분이 다 자랐어요. 새 화분을 놓았어요.</string>
+    <string name="grew_still">테라스에 새 물건이 놓였어요.</string>
+    <string name="back_home">뒤로</string>
 </resources>

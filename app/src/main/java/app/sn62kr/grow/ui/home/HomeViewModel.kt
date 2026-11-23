@@ -5,6 +5,9 @@ import androidx.lifecycle.viewModelScope
 import app.sn62kr.grow.Graph
 import app.sn62kr.grow.core.model.Activity
 import app.sn62kr.grow.core.model.Session
+import app.sn62kr.grow.core.draw.Pose
+import app.sn62kr.grow.core.garden.Garden
+import app.sn62kr.grow.core.garden.GardenState
 import app.sn62kr.grow.core.stats.Sums
 import app.sn62kr.grow.core.stats.YearGrid
 import app.sn62kr.grow.core.time.Rules
@@ -33,8 +36,11 @@ sealed interface FinishAsk {
     data object StalePause : FinishAsk
 }
 
+/** 끝낸 순간 식물에 생긴 일(plan M3 "자랐어요" 순간). */
+enum class Growth { LEAF, STAGE, FULL, STILL_LIFE }
+
 sealed interface HomeEvent {
-    data class Finished(val activityName: String, val sec: Int) : HomeEvent
+    data class Finished(val activityName: String, val sec: Int, val growth: Growth) : HomeEvent
     data class Added(val activityName: String, val sec: Int, val date: LocalDate) : HomeEvent
     data class Deleted(val session: Session) : HomeEvent
     data object DayOver : HomeEvent
@@ -52,6 +58,13 @@ class HomeViewModel(private val g: Graph) : ViewModel() {
     private val daily = g.records.daily(null)
     val grid: StateFlow<YearGrid?> = combine(daily, today) { d, t -> YearGrid.build(t.year, g.weekStart(), d, t) }.stateIn(viewModelScope, stay, null)
     val yearSec: StateFlow<Long> = combine(daily, today) { d, t -> Sums.totals(d, t, g.weekStart()).yearSec }.stateIn(viewModelScope, stay, 0L)
+
+    val garden: StateFlow<GardenState?> = g.garden.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    val gardenSeed: StateFlow<Long> = g.settings.gardenSeed.stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
+    private val totalSec: StateFlow<Long> = g.records.totalSec.stateIn(viewModelScope, SharingStarted.Eagerly, 0L)
+
+    /** "나"의 자세: 도는 타이머의 활동, 아니면 고른 활동(Q15). */
+    fun poseFor(activityId: String?): Pose = Pose.of(activities.value.firstOrNull { it.id == activityId }?.iconKey)
 
     val selectedDay = MutableStateFlow<LocalDate?>(null)
     val daySessions: StateFlow<List<Session>> = selectedDay.flatMapLatest { d -> if (d == null) flowOf(emptyList()) else g.records.day(d) }
@@ -109,8 +122,19 @@ class HomeViewModel(private val g: Graph) : ViewModel() {
     fun commit(t: RunningTimer, sec: Int?) {
         ask.value = null
         viewModelScope.launch {
+            val before = totalSec.value
             val s = g.timer.finish(sec)
-            if (s != null) _events.emit(HomeEvent.Finished(nameOf(t.activityId), s.durationSec))
+            if (s != null) _events.emit(HomeEvent.Finished(nameOf(t.activityId), s.durationSec, growth(before, before + s.durationSec)))
+        }
+    }
+
+    private fun growth(before: Long, after: Long): Growth {
+        val a = Garden.of(before, gardenSeed.value); val b = Garden.of(after, gardenSeed.value)
+        return when {
+            b.current.order > a.current.order -> Growth.FULL
+            b.current.stage > a.current.stage -> Growth.STAGE
+            b.stillLife > a.stillLife -> Growth.STILL_LIFE
+            else -> Growth.LEAF
         }
     }
 

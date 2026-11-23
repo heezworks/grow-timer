@@ -125,4 +125,22 @@
     <string name="day_empty">No time on this day.</string>
     <string name="day_add">Add time to this day</string>
     <string name="home_year_total">%1$s this year</string>
+
+    <!-- 식물과 장면(M3, D57). 지중해·휴가는 말하지 않는다(D56) -->
+    <string name="species_olive">Olive</string>
+    <string name="species_lemon">Lemon</string>
+    <string name="species_lavender">Lavender</string>
+    <string name="species_geranium">Geranium</string>
+    <string name="plant_title">Pot %1$d · %2$s</string>
+    <string name="plant_next">%1$s until it changes</string>
+    <string name="plant_with">%1$s with this one</string>
+    <string name="plant_grown">Fully grown</string>
+    <string name="still_next">%1$s until something new shows up on the terrace</string>
+    <string name="scene_desc">Terrace with %1$s in a pot, %2$d things around.</string>
+    <string name="plant_desc">%1$s, stage %2$d of 5.</string>
+    <string name="grew_leaf">A new leaf grew.</string>
+    <string name="grew_stage">Your plant looks a little different now.</string>
+    <string name="grew_full">Your plant is fully grown. A new pot is waiting.</string>
+    <string name="grew_still">Something new is on the terrace.</string>
+    <string name="back_home">Back</string>
 </resources>

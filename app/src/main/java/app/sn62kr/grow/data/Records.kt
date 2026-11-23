@@ -26,6 +26,9 @@ class Records(private val db: GrowDb, private val clock: () -> Long = System::cu
     fun daily(activityId: String? = null): Flow<Map<LocalDate, Int>> =
         sessions.observeDailySums(activityId).map { l -> l.associate { Days.parse(it.localDate) to it.sec } }
 
+    /** 모든 기록의 합(초). 식물과 정물이 이것에서 계산된다. */
+    val totalSec: Flow<Long> = sessions.observeTotal()
+
     /** 그해 활동별 합(초), 많은 순. */
     fun activityTotals(year: Int): Flow<List<Pair<String, Long>>> =
         sessions.observeActivitySums("$year-01-01", "$year-12-31").map { l -> l.map { it.activityId to it.sec } }
